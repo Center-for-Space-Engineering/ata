@@ -69,12 +69,12 @@ int main()
     fp_voltages_slow = fopen("logs/voltages_slow.csv", "w");
 
     // setup file for data to be read to
-    FILE *data;
+    FILE *fp_thermo;
     FILE *fp_thermo_slow;
     char filename[FNAME_BUFFER_SIZE];
     printf("\n Enter filename to record temperature data to (include .csv): ");
     fgets(filename, FNAME_BUFFER_SIZE, stdin);
-    data = fopen("logs/temperature_pre_vaccuum.csv", "w");
+    fp_thermo = fopen("logs/temperature_pre_vaccuum.csv", "w");
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
 
     // Setup file for RPM logging
@@ -87,7 +87,7 @@ int main()
     printf("Acquiring data ... Press 'Ctrl+C' to abort\n\n");
 
     // Write header row for temperature data
-    fprintf(data, THERMO_HEADER);
+    fprintf(fp_thermo, THERMO_HEADER);
     fprintf(fp_thermo_slow, THERMO_HEADER);
     
     // Write header row for voltage data
@@ -113,10 +113,10 @@ int main()
             STOP_ON_ERROR(result);
             
             // MCC 134 boards (thermocouple)
-            fprintf(data, "%d,", samples_per_channel);
-            print_chars(data, ctime(&seconds));
+            fprintf(fp_thermo, "%d,", samples_per_channel);
+            print_chars(fp_thermo, ctime(&seconds));
             
-            result = get_thermo(data);
+            result = get_thermo(fp_thermo);
             STOP_ON_ERROR(result);
 
             // RPM calculation
@@ -157,15 +157,15 @@ stop:
     print_error(result);
 
     fclose(fp_rpm);
-    fclose(fp_voltage);
-    fclose(fp_voltage_slow);
+    fclose(fp_voltages);
+    fclose(fp_voltages_slow);
     fclose(fp_thermo);
     fclose(fp_thermo_slow);
 
     return 0;
 }
 
-void print_chars(FILE* data, char* time_seconds)
+void print_chars(FILE* fp, char* time_seconds)
 {
     for(int i = 8; i < 19; i++)
     {
@@ -175,15 +175,15 @@ void print_chars(FILE* data, char* time_seconds)
             // because 8 will be a space if hours is less
             // than 10
             if (i != 8) {
-                fprintf(data, ":");
+                fprintf(fp, ":");
             } else {
-                fprintf(data, "0");
+                fprintf(fp, "0");
             }
         }
         else
         {
-            fprintf(data, "%c", time_seconds[i]);
+            fprintf(fp, "%c", time_seconds[i]);
         }
     }
-    fprintf(data, ",");
+    fprintf(fp, ",");
 }
