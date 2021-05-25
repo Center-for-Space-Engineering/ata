@@ -10,18 +10,18 @@ BDIR = bin
 # Compiler option
 INC = $(SDIR)
 INC_PARAMS = $(foreach d, $(INC), -I$d)
-LIBS = -ldaqhats
-CFLAGS = -Wall -I/usr/local/include -I./ -g
+LIBS = -ldaqhats -lm
+CFLAGS = -Wall -I/usr/local/include -I./src/ -g
 
 # Compilation commands
-CC = gcc $(CFLAGS) $(INC_PARAMS) $(LINKFLAGS)
-CL = gcc $(CFLAGS) $(LINKFLAGS)
+CC = gcc $(CFLAGS) $(INC_PARAMS) $(LIBS)
+CL = gcc $(CFLAGS) $(LIBS)
 
 #Default make target: setup the environment, then build the program
 .PHONY: all
 all: | toolchain $(PNAME)
 
-SRCS = data_acquisition.c
+SRCS = data_aquisition.c
 SOBJ = $(patsubst %.c, $(ODIR)/%.o, $(SRCS))
 
 $(BDIR)/$(PNAME): $(SOBJ)
