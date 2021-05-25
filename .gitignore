@@ -53,3 +53,5 @@ dkms.conf
 
 # Logs
 *.csv
+bin/
+obj/
