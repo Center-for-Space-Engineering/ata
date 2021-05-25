@@ -26,6 +26,7 @@
 #include <signal.h>
 
 // Constants
+#define DELAY_TIME 500
 #define FNAME_BUFFER_SIZE 50
 
 // Signal to stop logging
@@ -49,8 +50,10 @@ int main()
     // Delay and loop constants
     const int delay_between_reads = 1;  // ms
     // Set up how many loops before sampling for easier modification
-    const int one_hertz = 1000 / delay_between_reads;
-    const int sixty_hertz = 60000 / delay_between_reads;
+    //const int one_hertz = 1000 / delay_between_reads;
+    //const int sixty_hertz = 60000 / delay_between_reads;
+    const int one_hertz = 2000 / delay_between_reads;
+    const int sixty_hertz = 120000 / delay_between_reads;
     
     // Set up handler to catch Ctrl+C
     signal(SIGINT, end_handler);
@@ -73,6 +76,10 @@ int main()
     fgets(filename, FNAME_BUFFER_SIZE, stdin);
     data = fopen("logs/temperature_pre_vaccuum.csv", "w");
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
+
+    // Setup file for RPM logging
+    FILE *fp_rpm;
+    fp_rpm = fopen("logs/rpm.csv", "w");
     
     // setup for timestamp 
     time_t seconds;
@@ -111,6 +118,9 @@ int main()
             
             result = get_thermo(data);
             STOP_ON_ERROR(result);
+
+            // RPM calculation
+            get_rpm(fp_rpm);
         }
         
         ////////////////////////////////////////////
@@ -131,14 +141,26 @@ int main()
             result = get_thermo(fp_thermo_slow);
             STOP_ON_ERROR(result);
         }
+
+        ////////////////////////
+        // Get sample for RPM //
+        ////////////////////////
+        result = read_sample(1,1);
+        STOP_ON_ERROR(result);
         
         // Sleep for a second
-        usleep(delay_between_reads * 1000);
+        usleep(delay_between_reads * DELAY_TIME);
     }
 
 stop:
     printf("Cleaning up\n");
     print_error(result);
+
+    fclose(fp_rpm);
+    fclose(fp_voltage);
+    fclose(fp_voltage_slow);
+    fclose(fp_thermo);
+    fclose(fp_thermo_slow);
 
     return 0;
 }
