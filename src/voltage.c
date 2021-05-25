@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <math.h>
 
+
+double sample_values[SAMPLE_COUNT];
+int8_t sample_index = 0;
+
 /*
  * Function: get_voltages
  * 

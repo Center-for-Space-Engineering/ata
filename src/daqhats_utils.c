@@ -284,5 +284,3 @@ int select_hat_device(uint16_t hat_filter_id, uint8_t* address)
 
     return return_val;
 }
-
-#endif /* UTILITY_H_ */

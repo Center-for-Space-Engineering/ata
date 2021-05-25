@@ -79,9 +79,9 @@ int convert_chan_mask_to_array(uint32_t channel_mask, int chans[]);
    result code is not RESULT_SUCCESS, the error message is sent to stderr. */
 void print_error(int result);
 
-void resetCursor() {printf("\033[1;1H");}
-void clearEOL() {printf("\033[2K");}
-void cursorUp() {printf("\033[A");}
+void resetCursor();
+void clearEOL();
+void cursorUp();
 
 /****************************************************************************
  * User input functions
