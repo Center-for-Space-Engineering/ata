@@ -90,7 +90,7 @@ configure(spi2)
 
 # File to log data to
 logFile = "logs/SPI_logging.csv"
-with open(logFIle,'w',buffering=1) as csvfile:
+with open(logFile,'w',buffering=1) as csvfile:
 	writer = csv.writer(csvfile)
 	header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
 	writer.writerow(header)
