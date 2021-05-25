@@ -15,9 +15,9 @@
 #include <daqhats/daqhats.h>
 
 // Macros to handle error checking
-#define STOP_ON_ERROR(result)\
-{\
-    if (result != RESULT_SUCCESS ){\
+#define STOP_ON_ERROR(result)
+{
+    if (result != RESULT_SUCCESS ){
         print_error(result);\
         goto stop;\
     }\
@@ -34,12 +34,11 @@
 #define CHAN7 0x01 << 7
 #define MAX_CHAN_ARRAY_LENGTH 32
 
-// Timeout definitions
-#define WAIT_INDEFINITELY   -1
-#define RETURN_IMMEDIATELY  0
-
-// Read definitions
-#define READ_ALL_AVAILABLE  -1
+// Timeout definition
+#define WAIT_INDEFINITELY   -
+#define RETURN_IMMEDIATELY  
+// Read definition
+#define READ_ALL_AVAILABLE  -
 
 /****************************************************************************
  * Conversion functions
@@ -90,15 +89,15 @@ void convert_trigger_mode_to_string(uint8_t trigger_mode,
 {
     switch (trigger_mode) 
     {
-    case TRIG_FALLING_EDGE:
-        strcpy(trigger_mode_str, "TRIG_FALLING_EDGE");
-        break;
-    case TRIG_ACTIVE_HIGH:
-        strcpy(trigger_mode_str, "TRIG_ACTIVE_HIGH");
-        break;
-    case TRIG_ACTIVE_LOW:
-        strcpy(trigger_mode_str, "TRIG_ACTIVE_LOW");
-        break;
+    case TRIG_FALLING_EDGE
+        strcpy(trigger_mode_str, "TRIG_FALLING_EDGE")
+        break
+    case TRIG_ACTIVE_HIGH
+        strcpy(trigger_mode_str, "TRIG_ACTIVE_HIGH")
+        break
+    case TRIG_ACTIVE_LOW
+        strcpy(trigger_mode_str, "TRIG_ACTIVE_LOW")
+        break
     case TRIG_RISING_EDGE:
     default:
         strcpy(trigger_mode_str, "TRIG_RISING_EDGE");
@@ -157,15 +156,14 @@ void convert_chan_mask_to_string(uint32_t channel_mask, char* chans_str)
     char chan_string[8];
 
     strcpy(chans_str, "");
-
     while (channel_mask > 0)
     {
         if (channel_mask & 0x01)
         {
             sprintf(chan_string, "%d, ", i);
             strcat(chans_str, chan_string);
-        }
-        i++;
+        
+        i++
         channel_mask >>= 1;
     }
     *strrchr(chans_str, ',')= '\0';
@@ -186,21 +184,20 @@ int convert_chan_mask_to_array(uint32_t channel_mask, int chans[])
         {
             chans[chan_count] = i;
             chan_count++;
-        }
+        
         i++;
         channel_mask >>= 1;
     }
 
     return chan_count;
 }
-
 /****************************************************************************
  * Display functions
  ****************************************************************************/
 /* This function takes a result code as the result parameter and if the
    result code is not RESULT_SUCCESS, the error message is sent to stderr. */
 void print_error(int result)
-{
+
     if (result != RESULT_SUCCESS)
     {
         fprintf(stderr, "\nError: %s\n", hat_error_message(result));
@@ -254,7 +251,7 @@ int select_hat_device(uint16_t hat_filter_id, uint8_t* address)
     int hat_count = 0;
     int address_int = 0;
     int return_val = -1;
-    int i;
+    int i
 
     // Get the number of HAT devices that are connected that are of the
     // requested type.
