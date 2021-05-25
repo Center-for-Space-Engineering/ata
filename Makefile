@@ -21,7 +21,7 @@ CL = gcc $(CFLAGS) $(LIBS)
 .PHONY: all
 all: | toolchain $(PNAME)
 
-SRCS = data_aquisition.c voltage.c thermo.c
+SRCS = data_aquisition.c voltage.c thermo.c daqhats_utils.c
 SOBJ = $(patsubst %.c, $(ODIR)/%.o, $(SRCS))
 
 $(BDIR)/$(PNAME): $(SOBJ)
