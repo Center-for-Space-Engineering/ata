@@ -1,0 +1,6 @@
+[submodule "daqhats"]
+	path = daqhats
+	url = https://github.com/mccdaq/daqhats
+[submodule "pyBusPirateLite"]
+	path = pyBusPirateLite
+	url = https://github.com/juhasch/pyBusPirateLite
