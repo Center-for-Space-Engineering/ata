@@ -15,6 +15,8 @@
 
 *****************************************************************************/
 #include "daqhats_utils.h"
+#include "voltage.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,20 +25,6 @@
 #include <signal.h>
 
 // Constants
-#define VOLTAGE_MIN_ADDR 0
-#define VOLTAGE_MAX_ADDR 1
-#define VOLTAGE_LOW_CHANNEL 0
-#define VOLTAGE_HIGH_CHANNEL 7
-
-#define THERMO_MIN_ADDR 2
-#define THERMO_MAX_ADDR 4
-#define THERMO_ADDRS    3
-#define THERMO_LOW_CHANNEL  0
-#define THERMO_HIGH_CHANNEL 3
-#define THERMO_CHANNELS     4
-
-#define MAX_BIN_SIZE 450
-
 #define FNAME_BUFFER_SIZE 50
 
 // Signal to stop logging
@@ -46,10 +34,6 @@ void end_handler(int s) {
 }
 
 void print_chars(FILE*, char*);
-double calc_deviation(double bin[MAX_BIN_SIZE]);
-
-int8_t get_voltages(FILE *fp);
-int8_t get_thermo(FILE *fp);
 
 int main()
 {
@@ -182,146 +166,6 @@ stop:
     return 0;
 }
 
-/*
- * Function: get_voltages
- * 
- * Function which iterates over all MCC 118 boards (voltage)
- * and writes the line to a file.
- * 
- * fp: file pointer for logging data
- * 
- * returns: error condition (0 is no error)
- */
-int8_t get_voltages(FILE *fp) {
-    // Variable declarations
-    uint8_t address;
-    uint8_t channel;
-    uint32_t options = OPTS_DEFAULT; // Options for voltage boards
-    
-    double value;
-    uint8_t result;
-    
-    // Iterate over boards
-    for (address = VOLTAGE_MIN_ADDR; address <= VOLTAGE_MAX_ADDR; ++address) {
-        result = mcc118_open(address);
-        // Check for error
-        if (result != RESULT_SUCCESS) {
-            return result;
-        }
-        
-        // Iterate over all of the channels
-        for (channel = VOLTAGE_LOW_CHANNEL; channel <= VOLTAGE_HIGH_CHANNEL; ++channel) {
-            // Read voltage from board on channel
-            result = mcc118_a_in_read(address, channel, options, &value);
-            // Check for error
-            if (result != RESULT_SUCCESS) {
-                return result;
-            }
-            
-            // Write data to CSV file
-            fprintf(fp, "%12.2f,", value);
-            
-            //printf("Voltage, Channel %d: T\n", address*8 + channel);
-            printf("Voltage, Chanel %d: %12.2f\n", address*8 + channel, value);
-        }
-    }
-    fprintf(fp, "\n");
-    
-    // Flush the buffer to keep it up to date
-    fflush(fp);
-    
-    return RESULT_SUCCESS;
-}
-
-/*
- * Function: get_thermo
- * 
- * Function which iterates over all MCC 134 boards (thermo)
- * and writes the line to a file.
- * 
- * fp: file pointer for logging data
- * 
- * returns: error condition (0 is no error)
- */
-int8_t get_thermo(FILE *fp) {
-    // Static Variable declaration
-    static double   bins        [THERMO_ADDRS][THERMO_CHANNELS][MAX_BIN_SIZE];
-    static uint32_t bin_index   [THERMO_ADDRS][THERMO_CHANNELS];
-    static uint32_t can_deviate [THERMO_ADDRS][THERMO_CHANNELS];
-    
-    // Variables
-    uint8_t address;
-    uint8_t channel;
-    double value;
-    double valueF;
-    
-    uint8_t result;
-    double deviation;
-    
-    // Iterate over the boards
-    for (address = 0; address < THERMO_ADDRS; ++address) {
-        result = mcc134_open(address + THERMO_MIN_ADDR);
-        // Check for error
-        if (result != RESULT_SUCCESS) {
-            return result;
-        }
-        
-        // Iterate over each channel
-        for (channel = THERMO_LOW_CHANNEL; channel <= THERMO_HIGH_CHANNEL; channel++) {
-            result = mcc134_t_in_read(address + THERMO_MIN_ADDR, channel, &value);
-            if (result != RESULT_SUCCESS) {
-                return result;
-            }
-            
-            valueF = value*1.8 + 32.0; // Convert to Fahrenheit
-            if (value == OPEN_TC_VALUE) {
-                fprintf(fp,"Open,");
-            } else if (value == OVERRANGE_TC_VALUE) {
-                fprintf(fp,"OverRange,");
-            } else if (value == COMMON_MODE_TC_VALUE) {
-                fprintf(fp,"Common Mode,");
-            } else {
-                fprintf(fp, "%12.2f,", valueF);
-            }
-            
-            // Check for Steady State or Transient value
-            
-            // Get current index in circular buffer
-            uint32_t j = bin_index[address][channel];
-            // Update circular buffer
-            bins[address][channel][j] = valueF;
-            bin_index[address][channel]++;
-            
-            // If we have filled the buffer, it can then "deviate"
-            if (bin_index[address][channel] == MAX_BIN_SIZE) {
-                bin_index  [address][channel] = 0;
-                can_deviate[address][channel] = 1;
-            }
-            
-            // Determine whether Steady State (SS) or Transient (T)
-            
-            if (can_deviate[address][channel]) {
-                deviation = calc_deviation(bins[address][channel]);
-                // If deviation is less than the threshold, then SS
-                if (deviation < 0.25) {
-                    fprintf(fp, "Y,");
-                    printf("Thermo, Channel %d: SS   %12.2f\n", address*THERMO_CHANNELS + channel, valueF);
-                } else {
-                    fprintf(fp, "N,");
-                    printf("Thermo, Channel %d: T    %12.2f\n", address*THERMO_CHANNELS + channel, valueF);
-                }
-            }
-        }
-    }
-    
-    fprintf(fp, "\n");
-    
-    // Flush the buffer to keep it up to date
-    fflush(fp);
-    
-    return result;
-}
-
 void print_chars(FILE* data, char* time_seconds)
 {
     for(int i = 8; i < 19; i++)
@@ -343,20 +187,4 @@ void print_chars(FILE* data, char* time_seconds)
         }
     }
     fprintf(data, ",");
-}
-
-double calc_deviation(double bin[MAX_BIN_SIZE])
-{
-    double deviation = 0, sum = 0, mean = 0, temp = 0;
-    for(int i = 0; i < MAX_BIN_SIZE; i++)
-    {
-        sum += bin[i];
-    }
-    mean = sum/(double)MAX_BIN_SIZE;
-    for(int i = 0; i < MAX_BIN_SIZE; i++)
-    {
-        temp += pow(bin[i]-mean, 2);
-    }
-    deviation = sqrt(temp/(double)MAX_BIN_SIZE);
-    return deviation;
 }
