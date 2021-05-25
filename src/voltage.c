@@ -85,7 +85,7 @@ int8_t read_sample(uint8_t address, uint8_t channel) {
 
     // Put value into sample array
     sample_values[sample_index++] = value;
-    if (sample_index >= sample_COUNT) {
+    if (sample_index >= SAMPLE_COUNT) {
         sample_index = 0;
     }
     

@@ -45,7 +45,6 @@ int main()
     // Setup MCC variables
     int result = RESULT_SUCCESS;
     int samples_per_channel = 0;
-    int num_channels = mcc134_info()->NUM_AI_CHANNELS;
     
     // Delay and loop constants
     const int delay_between_reads = 1;  // ms
