@@ -14,7 +14,7 @@
         of the loop.
 
 *****************************************************************************/
-#include "daqhats_utils.h"
+//#include "daqhats_utils.h"
 #include "voltage.h"
 #include "thermo.h"
 
