@@ -92,6 +92,9 @@ int main()
     // Write header row for voltage data
     fprintf(fp_voltages, VOLTAGE_HEADER);
     fprintf(fp_voltages_slow, VOLTAGE_HEADER);
+
+    // Setup MCC 134 (thermo) boards
+    setup_thermo_daq();
     
     while (!stop)
     {
