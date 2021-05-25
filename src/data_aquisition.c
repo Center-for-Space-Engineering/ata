@@ -16,6 +16,7 @@
 *****************************************************************************/
 #include "daqhats_utils.h"
 #include "voltage.h"
+#include "thermo.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,23 +36,23 @@ void end_handler(int s) {
 
 void print_chars(FILE*, char*);
 
+static const char THERMO_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,SS,Channel 1,SS,Channel 2,SS,Channel 3,SS,Channel 4,SS,Channel 5,SS,Channel 6,SS,Channel 7,SS,Channel 8,SS,Channel 9,SS,Channel 10,SS,Channel 11,SS\n";
+static const char VOLTAGE_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15\n";
+
 int main()
 {
-    uint8_t address;
-    uint8_t channel;
-    uint8_t low_chan;
-    uint8_t high_chan;
-    uint8_t tc_type = TC_TYPE_T;    // change this to desired thermocouple typehow to print the last 10 characters of a string in C
-    
+    // Setup MCC variables
     int result = RESULT_SUCCESS;
     int samples_per_channel = 0;
     int num_channels = mcc134_info()->NUM_AI_CHANNELS;
     
+    // Delay and loop constants
     const int delay_between_reads = 1;  // ms
     // Set up how many loops before sampling for easier modification
     const int one_hertz = 1000 / delay_between_reads;
     const int sixty_hertz = 60000 / delay_between_reads;
     
+    // Set up handler to catch Ctrl+C
     signal(SIGINT, end_handler);
 
     // TODO update these file pointers so the extension/suffix is added
@@ -61,9 +62,6 @@ int main()
     char fname_voltages[FNAME_BUFFER_SIZE];
     printf("\n Enter filename to record voltage data to (include .csv): ");
     fgets(fname_voltages, FNAME_BUFFER_SIZE, stdin);
-    //fp_voltages = fopen("voltage_pre_vaccuum.csv", "w");
-    //fp_voltages = fopen("voltage_sat_test.csv", "w");
-    //fp_voltages = fopen(fname_voltages, "w");
     fp_voltages = fopen("logs/voltage_pre_vaccuum.csv", "w");
     fp_voltages_slow = fopen("logs/voltages_slow.csv", "w");
 
@@ -73,42 +71,22 @@ int main()
     char filename[FNAME_BUFFER_SIZE];
     printf("\n Enter filename to record temperature data to (include .csv): ");
     fgets(filename, FNAME_BUFFER_SIZE, stdin);
-    //data = fopen(filename, "w");
-    //data = fopen("temperature_sat_test.csv", "w");
     data = fopen("logs/temperature_pre_vaccuum.csv", "w");
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
     
     // setup for timestamp 
     time_t seconds;
     
-    low_chan = 0;
-    high_chan = num_channels - 1;
-    
-    uint8_t temp;
-    for(int i = 2; i < 5; i++)
-    {
-        temp = (uint8_t)i;
-        address = temp;
-        result  = mcc134_open(address);
-        STOP_ON_ERROR(result);
-        for (channel = low_chan; channel <= high_chan; channel++)
-        {
-            result = mcc134_tc_type_write(address, channel, tc_type);
-            STOP_ON_ERROR(result);
-        } 
-    }
-
     printf("Acquiring data ... Press 'Ctrl+C' to abort\n\n");
 
-    // Display the header row for the data table
-    fprintf(data, "Sample,Timestamp(dd:hh:mm:ss),Channel 0,SS,Channel 1,SS,Channel 2,SS,Channel 3,SS,Channel 4,SS,Channel 5,SS,Channel 6,SS,Channel 7,SS,Channel 8,SS,Channel 9,SS,Channel 10,SS,Channel 11,SS\n");
-    fprintf(fp_thermo_slow, "Sample,Timestamp(dd:hh:mm:ss),Channel 0,SS,Channel 1,SS,Channel 2,SS,Channel 3,SS,Channel 4,SS,Channel 5,SS,Channel 6,SS,Channel 7,SS,Channel 8,SS,Channel 9,SS,Channel 10,SS,Channel 11,SS\n");
+    // Write header row for temperature data
+    fprintf(data, THERMO_HEADER);
+    fprintf(fp_thermo_slow, THERMO_HEADER);
     
-    // Header row for voltage table
-    fprintf(fp_voltages, "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15\n");
-    fprintf(fp_voltages_slow, "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15\n");
+    // Write header row for voltage data
+    fprintf(fp_voltages, VOLTAGE_HEADER);
+    fprintf(fp_voltages_slow, VOLTAGE_HEADER);
     
-    //while (!enter_press())
     while (!stop)
     {
         // Display the updated samples per channel
@@ -160,7 +138,6 @@ int main()
 
 stop:
     printf("Cleaning up\n");
-    result = mcc134_close(address);
     print_error(result);
 
     return 0;
