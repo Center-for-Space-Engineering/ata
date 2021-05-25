@@ -9,7 +9,7 @@
 
 // Constants
 #define THERMO_MIN_ADDR 2
-#define THERMO_MAX_ADDR 4
+#define THERMO_MAX_ADDR 5
 #define THERMO_ADDRS    3
 #define THERMO_LOW_CHANNEL  0
 #define THERMO_HIGH_CHANNEL 3
