@@ -53,14 +53,13 @@ void convert_options_to_string(uint32_t options, char* options_str);
 /* This function converts the trigger mode defined by the trigger_mode
    parameter to a string representation and returns the string
    respresentation of the trigger mode. */
-void convert_trigger_mode_to_string(uint8_t trigger_mode, 
-    char* trigger_mode_str);
+void convert_trigger_mode_to_string(uint8_t trigger_mode, char* trigger_mode_str);
 
 /* This function converts the thermocouple type defined by the tc_type
    parameter to a string representation and returns the string
    respresentation. */
-void convert_tc_type_to_string(uint8_t tc_type, 
-    char* tc_type_str);
+void convert_tc_type_to_string(uint8_t tc_type, char* tc_type_str);
+
 
 /* This function converts the mask of channels defined by the channel_mask
    parameter and sets the chans_str parameter, which is passed by reference,
@@ -80,9 +79,9 @@ int convert_chan_mask_to_array(uint32_t channel_mask, int chans[]);
    result code is not RESULT_SUCCESS, the error message is sent to stderr. */
 void print_error(int result);
 
-void resetCursor();
-void clearEOL();
-void cursorUp();
+void resetCursor() {printf("\033[1;1H");}
+void clearEOL() {printf("\033[2K");}
+void cursorUp() {printf("\033[A");}
 
 /****************************************************************************
  * User input functions
