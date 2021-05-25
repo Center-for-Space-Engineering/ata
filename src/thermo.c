@@ -1,6 +1,7 @@
 #include "thermo.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <math.h>
 
 /*
  * Function: get_thermo

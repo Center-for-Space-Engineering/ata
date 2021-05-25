@@ -1,6 +1,7 @@
 #include "voltage.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <math.h>
 
 /*
  * Function: get_voltages
