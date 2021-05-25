@@ -77,10 +77,11 @@ int main()
     char fname_voltages[FNAME_BUFFER_SIZE];
     printf("\n Enter filename to record voltage data to (include .csv): ");
     fgets(fname_voltages, FNAME_BUFFER_SIZE, stdin);
-    fp_voltages = fopen("voltage_pre_vaccuum.csv", "w");
+    //fp_voltages = fopen("voltage_pre_vaccuum.csv", "w");
     //fp_voltages = fopen("voltage_sat_test.csv", "w");
     //fp_voltages = fopen(fname_voltages, "w");
-    fp_voltages_slow = fopen("voltages_slow.csv", "w");
+    fp_voltages = fopen("logs/voltage_pre_vaccuum.csv", "w");
+    fp_voltages_slow = fopen("logs/voltages_slow.csv", "w");
 
     // setup file for data to be read to
     FILE *data;
@@ -90,8 +91,8 @@ int main()
     fgets(filename, FNAME_BUFFER_SIZE, stdin);
     //data = fopen(filename, "w");
     //data = fopen("temperature_sat_test.csv", "w");
-    data = fopen("temperature_pre_vaccuum.csv", "w");
-    fp_thermo_slow = fopen("thermo_slow.csv", "w");
+    data = fopen("logs/temperature_pre_vaccuum.csv", "w");
+    fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
     
     // setup for timestamp 
     time_t seconds;
