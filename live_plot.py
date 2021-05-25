@@ -272,9 +272,9 @@ class CryoGraph(LiveGrapher):
         # Read the file
         #self.read_file()
 
-v_graph = VoltageGraph("voltages_slow.csv", 10,subsample=True)
+v_graph = VoltageGraph("logs/voltages_slow.csv", 10,subsample=True)
 #t_graph = ThermoGraph("thermo_slow.csv", 10,subsample=True)
-c_graph = CryoGraph("../pyBusPirateLite/SPI_logging.csv",10,subsample=True)
+c_graph = CryoGraph("logs/SPI_logging.csv",10,subsample=True)
 
 # Get time of start of the program
 start_time = time.time()
