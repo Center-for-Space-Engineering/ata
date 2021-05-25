@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 
-void setup_thermo_daq() {
+int8_t setup_thermo_daq() {
     uint8_t address;
     uint8_t channel;
     uint8_t tc_type = TC_TYPE_T;    // change this to desired thermocouple typehow to print the last 10 characters of a string in C
@@ -14,13 +14,16 @@ void setup_thermo_daq() {
     {
         address = (uint8_t)i;
         result  = mcc134_open(address);
-        STOP_ON_ERROR(result);
+        if (result != RESULT_SUCCESS)
+            return result;
         for (channel = THERMO_LOW_CHANNEL; channel <= THERMO_HIGH_CHANNEL; channel++)
         {
             result = mcc134_tc_type_write(address, channel, tc_type);
-            STOP_ON_ERROR(result);
+            if (result != RESULT_SUCCESS)
+                return result;
         }
     }
+    return result;
 }
 
 /*

@@ -17,7 +17,7 @@
 
 #define MAX_BIN_SIZE 450
 
-void setup_thermo_daq();
+int8_t setup_thermo_daq();
 
 int8_t get_thermo(FILE *fp);
 
