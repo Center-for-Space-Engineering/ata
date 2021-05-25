@@ -10,28 +10,28 @@ BDIR = bin
 # Compiler option
 INC = $(SDIR)
 INC_PARAMS = $(foreach d, $(INC), -I$d)
-CPPFLAGS = -std=c++11 -g
-LINKFLAGS = -lpthread
+LIBS = -ldaqhats
+CFLAGS = -Wall -I/usr/local/include -I./ -g
 
 # Compilation commands
-CPPC = g++ $(CPPFLAGS) $(INC_PARAMS) $(LINKFLAGS)
-CPPL = g++ $(CPPFLAGS) $(LINKFLAGS)
+CC = gcc $(CFLAGS) $(INC_PARAMS) $(LINKFLAGS)
+CL = gcc $(CFLAGS) $(LINKFLAGS)
 
 #Default make target: setup the environment, then build the program
 .PHONY: all
 all: | toolchain $(PNAME)
 
-SRCS = main.cpp dijkstra.cpp node.cpp
-SOBJ = $(patsubst %.cpp, $(ODIR)/%.o, $(SRCS))
+SRCS = data_acquisition.c
+SOBJ = $(patsubst %.c, $(ODIR)/%.o, $(SRCS))
 
 $(BDIR)/$(PNAME): $(SOBJ)
-	$(CPPL) -o $@ $^
+	$(CL) -o $@ $^
 
-$(ODIR)/%.o: $(SDIR)/%.cpp
-	$(CPPC) -c -o $@ $^
+$(ODIR)/%.o: $(SDIR)/%.c
+	$(CC) -c -o $@ $^
 
-%.o: %.cpp
-	$(CPPC) -c -o $@ $<
+%.o: %.c
+	$(CC) -c -o $@ $<
 
 .PHONY: clean
 clean:
