@@ -1,0 +1,306 @@
+import csv
+import matplotlib.pyplot as plt
+from matplotlib import style
+import time
+import math
+import threading
+from Queue import Queue
+import os
+
+from memory_profiler import profile
+
+# Generator which returns new lines as they're added.
+# It is easy to change the refresh rate because this just changes
+# how often new lines are checked for
+# https://stackoverflow.com/questions/5419888/reading-from-a-frequently-updated-file
+def follow(fname, sleep_sec=1):
+    with open(fname, "r") as current:
+        #current = open(fname, "r")
+        curino = os.fstat(current.fileno()).st_ino
+        while True:
+            while True:
+                line = current.readline()
+                if not line:
+                    break
+                yield line
+
+            try:
+                if os.stat(fname).st_ino != curino:
+                    new = open(fname, "r")
+                    current.close()
+                    current = new
+                    curino = os.fstat(current.fileno()).st_ino
+                    continue
+            except IOError:
+                pass
+            time.sleep(sleep_sec)
+
+# Function for seperate thread of reading from file
+def read_thread(fname, q):
+    for l in follow(fname):
+        # Put the line into the queue
+        q.put(l)
+
+style.use('ggplot')
+class LiveGrapher:
+    def __init__(self, fname, col_names, col_step, max_points=1000, truncate=True, subsample=False):
+        self.fig = plt.figure()
+        plt.ion()
+        plt.show()
+        self.fname = fname
+        #self.fin = open(fname)
+        self.col_names = col_names
+        self.col_step = col_step
+        
+        self.truncate = truncate
+        self.subsample = subsample
+        self.max_points = max_points
+        
+        # Count of how many frames have been plotted
+        self.frame_count = 0
+        self.max_frames = 100
+        
+        # Queue for getting data from file
+        self.q = Queue(maxsize=0)
+        self.thread = threading.Thread(target=read_thread, args=(self.fname,self.q))
+        self.thread.setDaemon(True)
+        self.thread.start()
+        
+        self.x = []
+        self.y = []
+        for i in range(len(self.col_names)-1):
+            self.y.append([])
+        
+        self.lastFilePosition = None
+    
+    def __del__(self):
+        self.fin.close()
+        self.q.join()
+        self.thread.join()
+    
+    # Function to parse a returned line from a file
+    def parseLine(self, line):
+        # Split on comma
+        line = line.split(",")
+        # Lock mutex
+        self.mtx.acquire()
+        try:
+            # Add sample number
+            self.x.append(int(line[0]))
+            for col in range(len(self.y)):
+                # If the value is not a float or doesn't exist, skip
+                try:
+                    self.y[col].append(float(line[col*self.col_step+2]))
+                except:
+                    pass
+        except:
+            # We were part of the header or had some other issue
+            print("Could not parse line correctly")
+            print("***********")
+            print(line)
+            print("***********")
+        # Unlock mutex
+        self.mtx.release()
+    
+    # Create all of the subplots for the figure
+    def create_plots(self, fig_rows, fig_cols):
+        # Create subplots
+        self.axs = []
+        for row in range(fig_rows):
+            for col in range(fig_cols):
+                self.axs.append(self.fig.add_subplot(fig_rows, fig_cols, row*fig_cols + col + 1))
+    
+    # Read the source file and create the arrays which will be plotted
+    #@profile
+    def read_file(self):
+        # Sample number
+        self.x = []
+        # Y columns
+        self.y = []
+        for i in range(len(self.col_names)-1):
+            self.y.append([])
+        # Read file
+        #with open(self.fname) as f:
+        if self.fin is not None:
+            reader = csv.DictReader(self.fin)
+            for row in reader:
+                # Add sample number
+                self.x.append(int(row['Sample']))
+                for i in range(len(self.col_names)-1):
+                    # If the value is not a float or doesn't exist, skip
+                    try:
+                        self.y[i].append(float(row[self.col_names[i+1]]))
+                    except:
+                        pass
+            # Save the last position in the file to simplify getting new
+            # data
+            self.lastFilePosition = self.fin.tell()
+
+    # Update the data and plot
+    #@profile
+    def update(self):
+        #self.update_file()
+        #self.read_file()
+        
+        # Iterate over the queue info
+        while not self.q.empty():
+            self.parseLine(self.q.get())
+            
+        self.plot()
+
+    # Update the array plots based on the source file
+    #@profile
+    def update_file(self):
+        # Check the file has been read at least once
+        if self.lastFilePosition is None:
+            self.read_file()
+        
+        # Read the file into an array
+        #with open(self.fname) as f:
+        # Seek to where we left off
+        self.fin.seek(self.lastFilePosition)
+        readed = self.fin.read().split("\n")[:-1]
+        # Update where we left off
+        self.lastFilePosition = self.fin.tell()
+        
+        # Add any new entries to x and y
+        """
+        last_sample = len(self.x)
+        for i in range(last_sample+1, len(readed)):
+        """
+        for i in range(len(readed)):
+            line = readed[i].replace(" ","")
+            line = line.split(",")
+            
+            # Add new values to arrays
+            self.x.append(int(line[0]))
+            for col in range(len(self.y)):
+                # If the value is not a float or doesn't exist, skip
+                try:
+                    self.y[col].append(float(line[col*self.col_step+2]))
+                except:
+                    pass
+
+    # Get the Y limits for the graphs
+    def get_y_limits(self):
+        y_mins = []
+        y_maxs = []
+        
+        for i in self.y:
+            if len(i) != 0:
+                y_mins.append(min(i))
+                y_maxs.append(max(i))
+        
+        self.y_min = min(y_mins)
+        self.y_max = max(y_maxs)
+        
+        # Round to nearest 2, making sure the range is at least 2
+        self.y_max = int(math.ceil(self.y_max/2.0)) * 2
+        self.y_min = int(math.floor(self.y_min/2.0)) * 2
+
+    # Update all plots
+    def plot(self):
+        # Clear plots
+        for ax in self.axs:
+            ax.clear()
+        
+        self.mtx.acquire()
+        # Plot the new data
+        print(len(self.y))
+        for i in range(len(self.axs)):
+            y_len = len(self.y[i])
+            
+            min_x = 0
+            max_x = y_len
+            step = 1
+
+            if (y_len >= self.max_points):
+                # Truncate graph display to last N samples
+                if self.truncate:
+                    min_x = y_len - self.max_points
+                    max_x = y_len
+            
+                # Subsample history for display
+                if self.subsample:
+                    step  = y_len / self.max_points
+                    min_x = y_len % self.max_points
+                    max_x = y_len
+            
+            # Make sure both arrays are the same size
+            self.axs[i].plot(self.x[min_x:max_x:step], self.y[i][min_x:max_x:step], label=self.col_names[i+1])
+            
+        # Update the y axis
+        self.get_y_limits()
+        self.mtx.release()
+        
+        for ax in self.axs:
+            ax.set_ylim(self.y_min, self.y_max)
+        
+        plt.pause(0.01)
+
+class VoltageGraph(LiveGrapher):
+    # Create a live view of the voltage readings
+    def __init__(self, fname, update_delay, truncate=True, subsample=False):
+        col_names = ['Sample', 'Channel 0','Channel 1','Channel 2',
+                     'Channel 3','Channel 4','Channel 5','Channel 6',
+                     'Channel 7','Channel 8','Channel 9','Channel 10',
+                     'Channel 11','Channel 12','Channel 13','Channel 14',
+                     'Channel 15']
+        LiveGrapher.__init__(self, fname, col_names, 1, truncate=truncate, subsample=subsample)
+        # Not actually used
+        self.update_delay = update_delay
+        
+        # Create the plots
+        self.create_plots(4, 4)
+        
+        # Read the file
+        #self.read_file()
+
+class ThermoGraph(LiveGrapher):
+    # Create a live view of the voltage readings
+    def __init__(self, fname, update_delay, truncate=True, subsample=False):
+        col_names = ['Sample', 'Channel 0','Channel 1','Channel 2',
+                     'Channel 3','Channel 4','Channel 5','Channel 6',
+                     'Channel 7','Channel 8','Channel 9','Channel 10',
+                     'Channel 11']
+        LiveGrapher.__init__(self, fname, col_names, 2, truncate=truncate, subsample=subsample)
+        # Not actually used
+        self.update_delay = update_delay
+        
+        # Create the plots
+        self.create_plots(3, 4)
+        
+        # Read the file
+        #self.read_file()
+
+class CryoGraph(LiveGrapher):
+    # Create a live view of the thermo readings from the cryo sensors
+    def __init__(self, fname, update_delay, truncate=True, subsample=False):
+        col_names = ['Sample','SPI0','SPI1','SPI2','SPI3']
+        LiveGrapher.__init__(self, fname, col_names, 1, truncate=truncate, subsample=subsample)
+        
+        # Create the plots
+        self.create_plots(2,2)
+        
+        # Read the file
+        #self.read_file()
+
+v_graph = VoltageGraph("voltages_slow.csv", 10,subsample=True)
+t_graph = ThermoGraph("thermo_slow.csv", 10,subsample=True)
+c_graph = CryoGraph("../pyBusPirateLite/SPI_logging.csv",10,subsample=True)
+
+#for i in range(5):
+while True:
+    print("Updating")
+    v_graph.update()
+    t_graph.update()
+    c_graph.update()
+    
+    # How many seconds between graph updates
+    time.sleep(5)
+"""
+print(t_graph.x)
+print(t_graph.y)
+t_graph.update()
+raw_input("Press enter")
+"""
