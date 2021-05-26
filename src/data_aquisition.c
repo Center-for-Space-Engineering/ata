@@ -107,7 +107,7 @@ int main()
             printf("    Time     |                                 Voltage Channel                                               |\n");
           //printf(" dd:hh:mm:ss |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
             printf(" ");
-            print_chars(nullptr, ctime(&seconds));
+            print_chars(NULL, ctime(&seconds));
             print(" |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
             printf("             |");
             // MCC 118 boards (voltage)
@@ -197,12 +197,12 @@ void print_chars(FILE* fp, char* time_seconds)
             // because 8 will be a space if hours is less
             // than 10
             if (i != 8) {
-                if (fp != nullptr)
+                if (fp != NULL)
                     fprintf(fp, ":");
                 else
                     printf(":");
             } else {
-                if (fp != nullptr)
+                if (fp != NULL)
                     fprintf(fp, "0");
                 else
                     printf("0");
@@ -210,12 +210,12 @@ void print_chars(FILE* fp, char* time_seconds)
         }
         else
         {
-            if (fp != nullptr)
+            if (fp != NULL)
                 fprintf(fp, "%c", time_seconds[i]);
             else
                 printf("%c", time_seconds[i]);
         }
     }
-    if (fp != nullptr)
+    if (fp != NULL)
         fprintf(fp, ",");
 }
