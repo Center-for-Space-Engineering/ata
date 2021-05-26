@@ -50,7 +50,7 @@ int8_t get_voltages(FILE *fp) {
             printf("Voltage, Channel %d: %12.2f\n", address*8 + channel, value);
         }
     }
-    fprintf(fp, "\n");
+    //fprintf(fp, "\n");
 
     // Flush the buffer to keep it up to date
     fflush(fp);
@@ -125,11 +125,50 @@ int16_t get_rpm(FILE *fp) {
     int16_t rpm = freq * 10;
 
     // Write data to CSV file
-    fprintf(fp, "%d\n", rpm);
+    fprintf(fp, "%d,", rpm);
     // Flush the buffer to keep it up to date
     fflush(fp);
 
     printf("RPM: %d\n", rpm);
 
     return rpm;
+}
+
+/*
+ * Function: get_pressure
+ * 
+ * Function determines pressure from channel and prints to file
+ * 
+ * returns: pressure
+ */
+double get_pressure(FILE *fp, uint8_t address, uint8_t channel) {
+    uint32_t options = OPTS_DEFAULT; // Options for voltage boards
+
+    double value;
+    uint8_t result;
+
+    result = mcc118_open(address);
+    // Check for error
+    if (result != RESULT_SUCCESS) {
+        return -1;
+    }
+
+    // Read voltage from board on channel
+    result = mcc118_a_in_read(address, channel, options, &value);
+
+    // Check for error
+    if (result != RESULT_SUCCESS) {
+        return -1;
+    }
+
+    // Calculate pressure
+    double pressure = result * 10.0 / 6;
+
+    // Write to file
+    fprintf(fp, "%12.2f\n", pressure);
+    fflush(fp);
+
+    printf("Pressure: %12.2f\n", pressure);
+    
+    return pressure;
 }

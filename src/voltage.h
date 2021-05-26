@@ -23,4 +23,7 @@ int8_t read_sample(uint8_t address, uint8_t channel);
 // RPM calculation and logging
 int16_t get_rpm(FILE *fp);
 
+// Pressure calculation and logging
+double get_pressure(FILE *fp, uint8_t address, uint8_t channel);
+
 #endif

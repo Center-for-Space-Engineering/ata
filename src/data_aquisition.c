@@ -38,7 +38,7 @@ void end_handler(int s) {
 void print_chars(FILE*, char*);
 
 static const char THERMO_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,SS,Channel 1,SS,Channel 2,SS,Channel 3,SS,Channel 4,SS,Channel 5,SS,Channel 6,SS,Channel 7,SS,Channel 8,SS,Channel 9,SS,Channel 10,SS,Channel 11,SS\n";
-static const char VOLTAGE_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15\n";
+static const char VOLTAGE_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15,RPM,Pressure\n";
 
 int main()
 {
@@ -76,10 +76,6 @@ int main()
     fp_thermo = fopen("logs/temperature_pre_vaccuum.csv", "w");
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
 
-    // Setup file for RPM logging
-    FILE *fp_rpm;
-    fp_rpm = fopen("logs/rpm.csv", "w");
-    
     // setup for timestamp 
     time_t seconds;
     
@@ -122,7 +118,9 @@ int main()
             STOP_ON_ERROR(result);
 
             // RPM calculation
-            get_rpm(fp_rpm);
+            get_rpm(fp_voltages);
+            // Pressure calculation
+            get_pressure(fp_voltages);
         }
         
         ////////////////////////////////////////////
@@ -142,6 +140,11 @@ int main()
             
             result = get_thermo(fp_thermo_slow);
             STOP_ON_ERROR(result);
+
+            // RPM calculation
+            get_rpm(fp_voltages_slow);
+            // Pressure calculation
+            get_pressure(fp_voltages_slow);
         }
 
         ////////////////////////
@@ -158,7 +161,6 @@ stop:
     printf("Cleaning up\n");
     print_error(result);
 
-    fclose(fp_rpm);
     fclose(fp_voltages);
     fclose(fp_voltages_slow);
     fclose(fp_thermo);
