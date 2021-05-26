@@ -104,11 +104,10 @@ int main()
         if (samples_per_channel % one_hertz == 0) {
             //system("clear");
             printf("\n");
-            printf("    Time     |                                 Voltage Channel                                               |\n");
-          //printf(" dd:hh:mm:ss |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
+            printf("    Time     |                                 Voltage Channel                                                               |\n");
             printf(" ");
             print_chars(NULL, ctime(&seconds));
-            print(" |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
+            printf(" |   0  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |  10  |  11  |  12  |  13  |  14  |  15  |\n");
             printf("             |");
             // MCC 118 boards (voltage)
             fprintf(fp_voltages, "%d,", samples_per_channel);

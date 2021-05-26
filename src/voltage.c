@@ -132,7 +132,7 @@ int16_t get_rpm(FILE *fp, uint8_t print) {
     fflush(fp);
 
     if (print)
-        printf(" %d |", rpm);
+        printf(" %4d |", rpm);
 
     return rpm;
 }
