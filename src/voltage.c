@@ -44,10 +44,11 @@ int8_t get_voltages(FILE *fp) {
             }
 
             // Write data to CSV file
-            fprintf(fp, "%12.2f,", value);
+            fprintf(fp, "%4.2f,", value);
 
             //printf("Voltage, Channel %d: T\n", address*8 + channel);
-            printf("Voltage, Channel %d: %12.2f\n", address*8 + channel, value);
+            //printf("Voltage, Channel %d: %4.2f\n", address*8 + channel, value);
+            printf("%4.2f|", value);
         }
     }
     //fprintf(fp, "\n");

@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <math.h>
 
+// Color coding
+#define BLKFG "\x1B[30m"
+#define REDBG "\x1B[41m"
+#define GRNBG "\x1B[42m"
+
 int8_t setup_thermo_daq() {
     uint8_t address;
     uint8_t channel;
@@ -74,7 +79,7 @@ int8_t get_thermo(FILE *fp) {
             } else if (value == COMMON_MODE_TC_VALUE) {
                 fprintf(fp,"Common Mode,");
             } else {
-                fprintf(fp, "%12.2f,", valueF);
+                fprintf(fp, "%6.2f,", valueF);
             }
 
             // Check for Steady State or Transient value
@@ -98,10 +103,14 @@ int8_t get_thermo(FILE *fp) {
                 // If deviation is less than the threshold, then SS
                 if (deviation < 0.25) {
                     fprintf(fp, "Y,");
-                    printf("Thermo, Channel %d: SS   %12.2f\n", address*THERMO_CHANNELS + channel, valueF);
+                    //printf("Thermo, Channel %d: SS   %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
+                    printf(GRNBG BLKFG "%6.2f" RESET, valueF);
+                    printf("|");
                 } else {
                     fprintf(fp, "N,");
-                    printf("Thermo, Channel %d: T    %12.2f\n", address*THERMO_CHANNELS + channel, valueF);
+                    //printf("Thermo, Channel %d: T    %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
+                    printf(REDBG BLKFG "%6.2f" RESET, valueF);
+                    printf("|");
                 }
             }
         }

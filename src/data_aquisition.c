@@ -102,7 +102,11 @@ int main()
         // Read values at 1 Hz from all boards //
         /////////////////////////////////////////
         if (samples_per_channel % one_hertz == 0) {
-            system("clear");
+            //system("clear");
+            printf("\n");
+            printf("    Time     |                                 Voltage Channel                                               |\n");
+            printf(" dd:hh:mm:ss |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
+
             // MCC 118 boards (voltage)
             fprintf(fp_voltages, "%d,", samples_per_channel);
             print_chars(fp_voltages, ctime(&seconds));
@@ -110,6 +114,9 @@ int main()
             result = get_voltages(fp_voltages);
             STOP_ON_ERROR(result);
             
+            printf("             ---------------------------------------------------------------------------------------------------------\n");
+            printf("             |                                           Thermo Channel                                              |\n");
+            printf("             |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |\n");
             // MCC 134 boards (thermocouple)
             fprintf(fp_thermo, "%d,", samples_per_channel);
             print_chars(fp_thermo, ctime(&seconds));
@@ -117,10 +124,14 @@ int main()
             result = get_thermo(fp_thermo);
             STOP_ON_ERROR(result);
 
+            printf("             ---------------------------------------------------------------------------------------------------------\n");
+            printf("             |   RPM   |   Pressure      |\n");
+
             // RPM calculation
             get_rpm(fp_voltages);
             // Pressure calculation
             get_pressure(fp_voltages);
+            printf("             -----------------------------\n");
         }
         
         ////////////////////////////////////////////
