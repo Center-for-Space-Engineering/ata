@@ -105,8 +105,11 @@ int main()
             //system("clear");
             printf("\n");
             printf("    Time     |                                 Voltage Channel                                               |\n");
-            printf(" dd:hh:mm:ss |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
-
+          //printf(" dd:hh:mm:ss |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
+            printf(" ");
+            print_chars(nullptr, ctime(&seconds));
+            print(" |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  | 10  | 11  | 12  | 13  | 14  | 15  |\n");
+            printf("             |");
             // MCC 118 boards (voltage)
             fprintf(fp_voltages, "%d,", samples_per_channel);
             print_chars(fp_voltages, ctime(&seconds));
@@ -118,6 +121,7 @@ int main()
             printf("             ---------------------------------------------------------------------------------------------------------\n");
             printf("             |                                           Thermo Channel                                              |\n");
             printf("             |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |\n");
+            printf("             |");
             // MCC 134 boards (thermocouple)
             fprintf(fp_thermo, "%d,", samples_per_channel);
             print_chars(fp_thermo, ctime(&seconds));
@@ -128,6 +132,7 @@ int main()
 
             printf("             ---------------------------------------------------------------------------------------------------------\n");
             printf("             |   RPM   |   Pressure      |\n");
+            printf("             |");
 
             // RPM calculation
             get_rpm(fp_voltages, 1);
@@ -192,15 +197,25 @@ void print_chars(FILE* fp, char* time_seconds)
             // because 8 will be a space if hours is less
             // than 10
             if (i != 8) {
-                fprintf(fp, ":");
+                if (fp != nullptr)
+                    fprintf(fp, ":");
+                else
+                    printf(":");
             } else {
-                fprintf(fp, "0");
+                if (fp != nullptr)
+                    fprintf(fp, "0");
+                else
+                    printf("0");
             }
         }
         else
         {
-            fprintf(fp, "%c", time_seconds[i]);
+            if (fp != nullptr)
+                fprintf(fp, "%c", time_seconds[i]);
+            else
+                printf("%c", time_seconds[i]);
         }
     }
-    fprintf(fp, ",");
+    if (fp != nullptr)
+        fprintf(fp, ",");
 }

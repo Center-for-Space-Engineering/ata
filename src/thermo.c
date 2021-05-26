@@ -80,7 +80,7 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
             } else if (value == COMMON_MODE_TC_VALUE) {
                 fprintf(fp,"Common Mode,");
             } else {
-                fprintf(fp, "%6.2f,", valueF);
+                fprintf(fp, "%3.2f,", valueF);
             }
 
             // Check for Steady State or Transient value
@@ -106,15 +106,15 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
                     fprintf(fp, "Y,");
                     //printf("Thermo, Channel %d: SS   %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
                     if (print) {
-                        printf(GRNBG BLKFG "%6.2f" RESET, valueF);
-                        printf("|");
+                        printf(GRNBG BLKFG "%3.2f" RESET, valueF);
+                        printf(" |");
                     }
                 } else {
                     fprintf(fp, "N,");
                     //printf("Thermo, Channel %d: T    %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
                     if (print) {
-                        printf(REDBG BLKFG "%6.2f" RESET, valueF);
-                        printf("|");
+                        printf(REDBG BLKFG "%3.2f" RESET, valueF);
+                        printf(" |");
                     }
                 }
             }

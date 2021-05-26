@@ -49,7 +49,7 @@ int8_t get_voltages(FILE *fp, uint8_t print) {
             //printf("Voltage, Channel %d: T\n", address*8 + channel);
             //printf("Voltage, Channel %d: %4.2f\n", address*8 + channel, value);
             if (print)
-                printf("%4.2f|", value);
+                printf(" %2.2f |", value);
         }
     }
     //fprintf(fp, "\n");
