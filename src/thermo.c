@@ -7,6 +7,7 @@
 #define BLKFG "\x1B[30m"
 #define REDBG "\x1B[41m"
 #define GRNBG "\x1B[42m"
+#define RESET "\x1B[0m"
 
 int8_t setup_thermo_daq() {
     uint8_t address;

@@ -130,7 +130,7 @@ int main()
             // RPM calculation
             get_rpm(fp_voltages);
             // Pressure calculation
-            get_pressure(fp_voltages);
+            get_pressure(fp_voltages,1,2);
             printf("             -----------------------------\n");
         }
         
@@ -155,7 +155,7 @@ int main()
             // RPM calculation
             get_rpm(fp_voltages_slow);
             // Pressure calculation
-            get_pressure(fp_voltages_slow);
+            get_pressure(fp_voltages,1,2);
         }
 
         ////////////////////////
