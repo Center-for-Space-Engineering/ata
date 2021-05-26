@@ -42,7 +42,7 @@ int8_t setup_thermo_daq() {
  * 
  * returns: error condition (0 is no error)
  */
-int8_t get_thermo(FILE *fp) {
+int8_t get_thermo(FILE *fp, bool print) {
     // Static Variable declaration
     static double   bins        [THERMO_ADDRS][THERMO_CHANNELS][MAX_BIN_SIZE];
     static uint32_t bin_index   [THERMO_ADDRS][THERMO_CHANNELS];
@@ -105,13 +105,17 @@ int8_t get_thermo(FILE *fp) {
                 if (deviation < 0.25) {
                     fprintf(fp, "Y,");
                     //printf("Thermo, Channel %d: SS   %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
-                    printf(GRNBG BLKFG "%6.2f" RESET, valueF);
-                    printf("|");
+                    if (print) {
+                        printf(GRNBG BLKFG "%6.2f" RESET, valueF);
+                        printf("|");
+                    }
                 } else {
                     fprintf(fp, "N,");
                     //printf("Thermo, Channel %d: T    %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
-                    printf(REDBG BLKFG "%6.2f" RESET, valueF);
-                    printf("|");
+                    if (print) {
+                        printf(REDBG BLKFG "%6.2f" RESET, valueF);
+                        printf("|");
+                    }
                 }
             }
         }

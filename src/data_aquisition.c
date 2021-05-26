@@ -111,7 +111,8 @@ int main()
             fprintf(fp_voltages, "%d,", samples_per_channel);
             print_chars(fp_voltages, ctime(&seconds));
             
-            result = get_voltages(fp_voltages);
+            result = get_voltages(fp_voltages, true);
+            printf("\n");
             STOP_ON_ERROR(result);
             
             printf("             ---------------------------------------------------------------------------------------------------------\n");
@@ -121,16 +122,17 @@ int main()
             fprintf(fp_thermo, "%d,", samples_per_channel);
             print_chars(fp_thermo, ctime(&seconds));
             
-            result = get_thermo(fp_thermo);
+            result = get_thermo(fp_thermo, true);
+            printf("\n");
             STOP_ON_ERROR(result);
 
             printf("             ---------------------------------------------------------------------------------------------------------\n");
             printf("             |   RPM   |   Pressure      |\n");
 
             // RPM calculation
-            get_rpm(fp_voltages);
+            get_rpm(fp_voltages, true);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2);
+            get_pressure(fp_voltages,1,2, true);
             printf("             -----------------------------\n");
         }
         
@@ -142,20 +144,20 @@ int main()
             fprintf(fp_voltages_slow, "%d,", samples_per_channel);
             print_chars(fp_voltages_slow, ctime(&seconds));
             
-            result = get_voltages(fp_voltages_slow);
+            result = get_voltages(fp_voltages_slow, false);
             STOP_ON_ERROR(result);
             
             // MCC 134 boards (thermocouple)
             fprintf(fp_thermo_slow, "%d,", samples_per_channel);
             print_chars(fp_thermo_slow, ctime(&seconds));
             
-            result = get_thermo(fp_thermo_slow);
+            result = get_thermo(fp_thermo_slow, false);
             STOP_ON_ERROR(result);
 
             // RPM calculation
-            get_rpm(fp_voltages_slow);
+            get_rpm(fp_voltages_slow, false);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2);
+            get_pressure(fp_voltages,1,2, false);
         }
 
         ////////////////////////

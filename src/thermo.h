@@ -19,7 +19,7 @@
 
 int8_t setup_thermo_daq();
 
-int8_t get_thermo(FILE *fp);
+int8_t get_thermo(FILE *fp, bool print);
 
 double calc_deviation(double bin[MAX_BIN_SIZE]);
 
