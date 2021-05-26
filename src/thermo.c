@@ -42,7 +42,7 @@ int8_t setup_thermo_daq() {
  * 
  * returns: error condition (0 is no error)
  */
-int8_t get_thermo(FILE *fp, bool print) {
+int8_t get_thermo(FILE *fp, uint8_t print) {
     // Static Variable declaration
     static double   bins        [THERMO_ADDRS][THERMO_CHANNELS][MAX_BIN_SIZE];
     static uint32_t bin_index   [THERMO_ADDRS][THERMO_CHANNELS];

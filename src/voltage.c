@@ -17,7 +17,7 @@ int8_t sample_index = 0;
  * 
  * returns: error condition (0 is no error)
  */
-int8_t get_voltages(FILE *fp, bool print) {
+int8_t get_voltages(FILE *fp, uint8_t print) {
     // Variable declarations
     uint8_t address;
     uint8_t channel;
@@ -106,7 +106,7 @@ int8_t read_sample(uint8_t address, uint8_t channel) {
  * 
  * returns: RPM
  */
-int16_t get_rpm(FILE *fp, bool print) {
+int16_t get_rpm(FILE *fp, uint8_t print) {
     double threshold = 1.0;
     uint16_t count = 0;
 
@@ -144,7 +144,7 @@ int16_t get_rpm(FILE *fp, bool print) {
  * 
  * returns: pressure
  */
-double get_pressure(FILE *fp, uint8_t address, uint8_t channel, bool print) {
+double get_pressure(FILE *fp, uint8_t address, uint8_t channel, uint8_t print) {
     uint32_t options = OPTS_DEFAULT; // Options for voltage boards
 
     double value;

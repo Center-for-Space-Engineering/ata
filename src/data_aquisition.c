@@ -111,7 +111,7 @@ int main()
             fprintf(fp_voltages, "%d,", samples_per_channel);
             print_chars(fp_voltages, ctime(&seconds));
             
-            result = get_voltages(fp_voltages, true);
+            result = get_voltages(fp_voltages, 1);
             printf("\n");
             STOP_ON_ERROR(result);
             
@@ -122,7 +122,7 @@ int main()
             fprintf(fp_thermo, "%d,", samples_per_channel);
             print_chars(fp_thermo, ctime(&seconds));
             
-            result = get_thermo(fp_thermo, true);
+            result = get_thermo(fp_thermo, 1);
             printf("\n");
             STOP_ON_ERROR(result);
 
@@ -130,9 +130,9 @@ int main()
             printf("             |   RPM   |   Pressure      |\n");
 
             // RPM calculation
-            get_rpm(fp_voltages, true);
+            get_rpm(fp_voltages, 1);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2, true);
+            get_pressure(fp_voltages,1,2, 1);
             printf("             -----------------------------\n");
         }
         
@@ -144,20 +144,20 @@ int main()
             fprintf(fp_voltages_slow, "%d,", samples_per_channel);
             print_chars(fp_voltages_slow, ctime(&seconds));
             
-            result = get_voltages(fp_voltages_slow, false);
+            result = get_voltages(fp_voltages_slow, 0);
             STOP_ON_ERROR(result);
             
             // MCC 134 boards (thermocouple)
             fprintf(fp_thermo_slow, "%d,", samples_per_channel);
             print_chars(fp_thermo_slow, ctime(&seconds));
             
-            result = get_thermo(fp_thermo_slow, false);
+            result = get_thermo(fp_thermo_slow, 0);
             STOP_ON_ERROR(result);
 
             // RPM calculation
-            get_rpm(fp_voltages_slow, false);
+            get_rpm(fp_voltages_slow, 0);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2, false);
+            get_pressure(fp_voltages,1,2, 0);
         }
 
         ////////////////////////
