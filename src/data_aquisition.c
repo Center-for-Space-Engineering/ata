@@ -60,7 +60,7 @@ int main()
     signal(SIGINT, end_handler);
 
     // Start busPirate things to read from RTD
-    rtd_setup();
+    //rtd_setup();
 
     // TODO update these file pointers so the extension/suffix is added
     // File data for Voltages
@@ -82,8 +82,8 @@ int main()
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
 
     // setup files for RTD logging
-    FILE *fp_rtd      = fopen("logs/rtd.csv", "w");
-    FILE *fp_rtd_slow = fopen("logs/rtd_slow.csv", "w");
+    //FILE *fp_rtd      = fopen("logs/rtd.csv", "w");
+    //FILE *fp_rtd_slow = fopen("logs/rtd_slow.csv", "w");
 
     // setup for timestamp 
     time_t seconds;
@@ -99,8 +99,8 @@ int main()
     fprintf(fp_voltages_slow, VOLTAGE_HEADER);
 
     // Write header row for rtd data
-    fprintf(fp_rtd,      RTD_HEADER);
-    fprintf(fp_rtd_slow, RTD_HEADER);
+    //fprintf(fp_rtd,      RTD_HEADER);
+    //fprintf(fp_rtd_slow, RTD_HEADER);
 
     // Setup MCC 134 (thermo) boards
     setup_thermo_daq();
@@ -150,14 +150,15 @@ int main()
             get_rpm(fp_voltages, 1);
             // Pressure calculation
             get_pressure(fp_voltages,1,2, 1);
+            printf("             -----------------------------\n");
 
             // RTD data
-            printf("             ---------------------------------\n");
-            printf("             |              RTD              |\n");
-            printf("             |   0   |   1   |   2   |   3   |\n");
-            printf("             |");
-            rtd_read(fp_rtd, 1);
-            printf("             ---------------------------------\n");
+            //printf("             ---------------------------------\n");
+            //printf("             |              RTD              |\n");
+            //printf("             |   0   |   1   |   2   |   3   |\n");
+            //printf("             |");
+            //rtd_read(fp_rtd, 1);
+            //printf("             ---------------------------------\n");
         }
         
         ////////////////////////////////////////////
@@ -184,7 +185,7 @@ int main()
             get_pressure(fp_voltages,1,2, 0);
 
             // RTD data
-            rtd_read(fp_rtd_slow, 0);
+            //rtd_read(fp_rtd_slow, 0);
         }
 
         ////////////////////////
