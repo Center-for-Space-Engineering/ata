@@ -104,14 +104,13 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
                 // If deviation is less than the threshold, then SS
                 if (deviation < 0.25) {
                     fprintf(fp, "Y,");
-                    //printf("Thermo, Channel %d: SS   %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
                     if (print) {
                         printf(GRNBG BLKFG "%3.2f" RESET, valueF);
                         printf(" |");
                     }
                 } else {
+                    // Otherwise, transient
                     fprintf(fp, "N,");
-                    //printf("Thermo, Channel %d: T    %6.2f\n", address*THERMO_CHANNELS + channel, valueF);
                     if (print) {
                         printf(REDBG BLKFG "%3.2f" RESET, valueF);
                         printf(" |");
