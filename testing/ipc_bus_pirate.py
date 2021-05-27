@@ -1,21 +1,8 @@
 from pyBusPirateLite.pyBusPirateLite.SPI import SPI
-from datetime import datetime
 
-import time
 import csv
-
-"""
-Example code from library
-
-from pyBusPirateLite.SPI import SPI
-spi = SPI()
-spi.pins = SPI.PIN_POWER | SPI.PIN_CS
-spi.config = SPI.CFG_PUSH_PULL | SPI.CFG_IDLE
-spi.speed = '1MHz'
-spi.cs = True
-data = spi.transfer( [0x82, 0x00])
-spi.cs = False
-"""
+import posix_ipc
+from time import sleep
 
 # Turn on V_bias and clear unwanted things
 def configure(spi, byte=0xC3):
@@ -88,23 +75,33 @@ spi2 = SPI(portname='/dev/ttyUSB1')
 configure(spi1)
 configure(spi2)
 
-# File to log data to
-logFile = "logs/SPI_logging.csv"
-with open(logFile,'w',buffering=1) as csvfile:
-	writer = csv.writer(csvfile)
-	header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
-	writer.writerow(header)
+# Open message queue
+mq_req = posix_ipc.MessageQueue('/mqRequest')
+mq_val = posix_ipc.MessageQueue('/mqValue')
 
-	count = 0
-	while True:
-		t = datetime.now()
-		(data1, data2) = read(spi1, lines=2)
-		(data3, data4) = read(spi2, lines=2)
-		currentTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-		print(f"{currentTime}, running for {count} seconds: {data1}, {data2}, {data3}, {data4}")
-		count += 1
-		
-		# Add to file
-		writer.writerow([count, t.strftime("%H:%M:%S"), data1, data2, data3, data4])
-		
-		time.sleep(1)
+# File to log data to
+#header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
+
+# Get message from queue
+(msg, priority) = mq_req.receive()
+
+count = 0
+while msg != '0':
+    (data1, data2) = read(spi1, lines=2)
+    (data3, data4) = read(spi2, lines=2)
+    #(data3, data4) = (0,0)
+    #print(count,"seconds:",data1,data2,data3,data4)
+    #print(f"{currentTime}, running for {count} seconds: {data1}, {data2}, {data3}, {data4}")
+    print(f"{count} seconds: {data1}, {data2}, {data3}, {data4}")
+    count += 1
+    
+    # Add to file
+    #writer.writerow([count, t.strftime("%H:%M:%S"), data1, data2, data3, data4])
+
+    mq_val.send('{data1:>5}')
+    mq_val.send('{data2:>5}')
+    mq_val.send('{data3:>5}')
+    mq_val.send('{data4:>5}')
+
+    # Wait for next message to get sample
+    (msg, priority) = mq_req.receive()
