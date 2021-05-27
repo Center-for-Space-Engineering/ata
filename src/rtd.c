@@ -32,10 +32,12 @@ void rtd_read(FILE* fp, uint8_t print) {
     mq_send(requestQueue, "1", 1, 0);
 
     // Get responses
-    char buffer [5];
+    char buffer [6];
+    memset(buffer, 0, 6);
     uint16_t value;
     for (uint8_t i = 0; i < 4; ++i) {
         mq_receive(valueQueue, buffer, 5, 0);
+        printf("Buffer: %c", buffer);
         sscanf(buffer, "%d", &value);
 
 
