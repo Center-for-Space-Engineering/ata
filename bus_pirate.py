@@ -75,16 +75,15 @@ spi2 = SPI(portname='/dev/ttyUSB1')
 configure(spi1)
 configure(spi2)
 
-
-sleep(1)
 # Open message queue
-mq = posix_ipc.MessageQueue('/mqATA')
+mq_req = posix_ipc.MessageQueue('/mqRequest')
+mq_val = posix_ipc.MessageQueue('/mqValue')
 
 # File to log data to
 #header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
 
 # Get message from queue
-(msg, priority) = mq.receive()
+(msg, priority) = mq_req.receive()
 
 count = 0
 while msg != '0':
@@ -99,10 +98,10 @@ while msg != '0':
     # Add to file
     #writer.writerow([count, t.strftime("%H:%M:%S"), data1, data2, data3, data4])
 
-    mq.send('{data1:>5}')
-    mq.send('{data2:>5}')
-    mq.send('{data3:>5}')
-    mq.send('{data4:>5}')
+    mq_val.send('{data1:>5}')
+    mq_val.send('{data2:>5}')
+    mq_val.send('{data3:>5}')
+    mq_val.send('{data4:>5}')
 
     # Wait for next message to get sample
-    (msg, priority) = mq.receive()
+    (msg, priority) = mq_req.receive()
