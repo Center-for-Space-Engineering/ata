@@ -37,7 +37,7 @@ void rtd_read(FILE* fp, uint8_t print) {
     uint16_t value;
     for (uint8_t i = 0; i < 4; ++i) {
         mq_receive(valueQueue, buffer, 5, 0);
-        printf("Buffer: *%c*", buffer);
+        printf("Buffer: *%s*", buffer);
         sscanf(buffer, "%d", &value);
 
 
