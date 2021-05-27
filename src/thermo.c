@@ -116,6 +116,8 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
                         printf(" |");
                     }
                 }
+            } else {
+                printf(REDBG BLKFG "      |" RESET);
             }
         }
     }

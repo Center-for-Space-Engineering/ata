@@ -45,7 +45,7 @@ void rtd_read(FILE* fp, uint8_t print) {
 
         if (print) {
             //printf("%3.2f |",value);
-            printf("%d,", value);
+            printf("%4d  |", value);
         }
     }
     fprintf(fp, "\n");

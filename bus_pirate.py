@@ -85,7 +85,7 @@ count = 0
 while msg != '0':
     (data1, data2) = read(spi1, lines=2)
     (data3, data4) = read(spi2, lines=2)
-    #print(f"{count} seconds: {data1}, {data2}, {data3}, {data4}")
+    print(f"{count} : {data1}, {data2}, {data3}, {data4}")
     count += 1
     
     mq_val.send('{data1:>5}')
