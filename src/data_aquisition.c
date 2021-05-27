@@ -60,7 +60,7 @@ int main()
     signal(SIGINT, end_handler);
 
     // Start busPirate things to read from RTD
-    busPirate_setup();
+    rtd_setup();
 
     // TODO update these file pointers so the extension/suffix is added
     // File data for Voltages

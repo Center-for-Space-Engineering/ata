@@ -10,7 +10,7 @@ BDIR = bin
 # Compiler option
 INC = $(SDIR)
 INC_PARAMS = $(foreach d, $(INC), -I$d)
-LIBS = -ldaqhats -lm
+LIBS = -ldaqhats -lm -lrt
 CFLAGS = -Wall -I/usr/local/include -I./src/ -g
 
 # Compilation commands
@@ -21,7 +21,7 @@ CL = gcc $(CFLAGS) $(LIBS)
 .PHONY: all
 all: | toolchain $(PNAME)
 
-SRCS = data_aquisition.c voltage.c thermo.c daqhats_utils.c
+SRCS = data_aquisition.c voltage.c thermo.c daqhats_utils.c rtd.c
 SOBJ = $(patsubst %.c, $(ODIR)/%.o, $(SRCS))
 
 $(BDIR)/$(PNAME): $(SOBJ)

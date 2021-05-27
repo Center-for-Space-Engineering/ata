@@ -12,7 +12,7 @@ mqd_t rtdQueue;
 void rtd_setup() {
     // Set up message queue for bus pirates
     mq_unlink(MQ_NAME);
-    //rtdQueue = mq_open(MQ_NAME, O_CREAT | O_RDRW, 0666, 0);
+    rtdQueue = mq_open(MQ_NAME, O_CREAT | O_RDWR, 0666, 0);
     
     // Spawn process for Python to interface with rtd
     system("python3 bus_pirate.py &");

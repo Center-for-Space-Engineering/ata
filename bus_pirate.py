@@ -2,6 +2,7 @@ from pyBusPirateLite.pyBusPirateLite.SPI import SPI
 
 import csv
 import posix_ipc
+from time import sleep
 
 # Turn on V_bias and clear unwanted things
 def configure(spi, byte=0xC3):
@@ -74,6 +75,8 @@ spi2 = SPI(portname='/dev/ttyUSB1')
 configure(spi1)
 configure(spi2)
 
+
+sleep(1)
 # Open message queue
 mq = posix_ipc.MessageQueue('/mqATA')
 
@@ -81,7 +84,7 @@ mq = posix_ipc.MessageQueue('/mqATA')
 #header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
 
 # Get message from queue
-(msg, priority) = self.mq.receive()
+(msg, priority) = mq.receive()
 
 count = 0
 while msg != '0':
@@ -90,15 +93,16 @@ while msg != '0':
     #(data3, data4) = (0,0)
     #print(count,"seconds:",data1,data2,data3,data4)
     #print(f"{currentTime}, running for {count} seconds: {data1}, {data2}, {data3}, {data4}")
+    print(f"{count} seconds: {data1}, {data2}, {data3}, {data4}")
     count += 1
     
     # Add to file
     #writer.writerow([count, t.strftime("%H:%M:%S"), data1, data2, data3, data4])
 
-    self.mq.send('{data1:>5}')
-    self.mq.send('{data2:>5}')
-    self.mq.send('{data3:>5}')
-    self.mq.send('{data4:>5}')
+    mq.send('{data1:>5}')
+    mq.send('{data2:>5}')
+    mq.send('{data3:>5}')
+    mq.send('{data4:>5}')
 
     # Wait for next message to get sample
-    (msg, priority) = self.mq.receive()
+    (msg, priority) = mq.receive()
