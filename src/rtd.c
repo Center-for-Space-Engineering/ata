@@ -48,6 +48,9 @@ void rtd_read(FILE* fp, uint8_t print) {
             printf("%d,", value);
         }
     }
+    fprintf(fp, "\n");
+
+    fflush(fp);
 }
 
 void rtd_close() {

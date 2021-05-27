@@ -156,6 +156,8 @@ int main()
             printf("             |              RTD              |\n");
             printf("             |   0   |   1   |   2   |   3   |\n");
             printf("             |");
+            fprintf(fp_rtd, "%d,", samples_per_channel);
+            print_chars(fp_rtd, ctime(&seconds));
             rtd_read(fp_rtd, 1);
             printf("             ---------------------------------\n");
         }
@@ -184,6 +186,8 @@ int main()
             get_pressure(fp_voltages,1,2, 0);
 
             // RTD data
+            fprintf(fp_rtd_slow, "%d,", samples_per_channel);
+            print_chars(fp_rtd_slow, ctime(&seconds));
             rtd_read(fp_rtd_slow, 0);
         }
 

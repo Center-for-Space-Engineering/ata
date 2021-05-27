@@ -1,6 +1,5 @@
 from pyBusPirateLite.pyBusPirateLite.SPI import SPI
 
-import csv
 import posix_ipc
 from time import sleep
 
@@ -79,9 +78,6 @@ configure(spi2)
 mq_req = posix_ipc.MessageQueue('/mqRequest')
 mq_val = posix_ipc.MessageQueue('/mqValue')
 
-# File to log data to
-#header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
-
 # Get message from queue
 (msg, priority) = mq_req.receive()
 
@@ -89,15 +85,9 @@ count = 0
 while msg != '0':
     (data1, data2) = read(spi1, lines=2)
     (data3, data4) = read(spi2, lines=2)
-    #(data3, data4) = (0,0)
-    #print(count,"seconds:",data1,data2,data3,data4)
-    #print(f"{currentTime}, running for {count} seconds: {data1}, {data2}, {data3}, {data4}")
-    print(f"{count} seconds: {data1}, {data2}, {data3}, {data4}")
+    #print(f"{count} seconds: {data1}, {data2}, {data3}, {data4}")
     count += 1
     
-    # Add to file
-    #writer.writerow([count, t.strftime("%H:%M:%S"), data1, data2, data3, data4])
-
     mq_val.send('{data1:>5}')
     mq_val.send('{data2:>5}')
     mq_val.send('{data3:>5}')
