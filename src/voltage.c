@@ -177,11 +177,14 @@ double get_pressure(FILE *fp, uint8_t address, uint8_t channel, uint8_t print) {
     double pressure = value * 12.5005 - 49.9417;
 
     // Write to file
-    fprintf(fp, "%12.2f\n", pressure);
+    //fprintf(fp, "%12.2f\n", pressure);
+    fprintf(fp, "%12.7f\n", value);
     fflush(fp);
 
-    if (print)
-        printf("%12.2f|\n", pressure);
+    if (print) {
+        //printf("%12.2f|\n", pressure);
+        printf("%12.7f|\n", value);
+    }
     
     return pressure;
 }
