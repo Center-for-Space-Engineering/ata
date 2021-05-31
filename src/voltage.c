@@ -165,7 +165,8 @@ double get_pressure(FILE *fp, uint8_t address, uint8_t channel, uint8_t print) {
     }
 
     // Calculate pressure
-    double pressure = result * 10.0 / 6;
+    //double pressure = result * 10.0 / 6;
+    double pressure = result * 12.5005 - 49.9417;
 
     // Write to file
     fprintf(fp, "%12.2f\n", pressure);
