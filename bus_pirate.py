@@ -1,5 +1,6 @@
 from pyBusPirateLite.pyBusPirateLite.SPI import SPI
 from datetime import datetime
+from math import trunc
 
 import time
 import csv
@@ -83,8 +84,10 @@ def read(spi, lines=2):
 # Convert the ADC from the board to Celcius, according to
 # the datasheet. The equation is off by -1.75 C at -100 degrees C
 def convert_to_celcius(data):
+    out = []
     for adc in data:
-        val = (adc / 32.0) - 256
+        val = (adc / 32.0) - 256 
+        val = trunc(val*100) / 100.0
         out.append(val)
     return out
 
@@ -96,11 +99,18 @@ spi2 = SPI(portname='/dev/ttyUSB1')
 configure(spi1)
 configure(spi2)
 
+# RTDs for satellite test June 1
+#  RTD 1 - Detector right side
+#  RTD 2 - Detector bottom
+#  RTD 3 - Wire rope isolator frame
+#  RTD 4 - Cryo-cooler Cold Tip
+
 # File to log data to
 logFile = "logs/SPI_logging.csv"
 with open(logFile,'w',buffering=1) as csvfile:
     writer = csv.writer(csvfile)
-    header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
+    #header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
+    header = ["Sample","Time","Detector Right Side","Detector bottom","Wire rope isolator frame","Cryo-cooler Cold Tip"]
     writer.writerow(header)
 
     count = 0
