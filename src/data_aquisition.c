@@ -120,7 +120,7 @@ int main()
             printf("    Time     |                                      Voltage Channel                                                          |\n");
             printf(" ");
             print_chars(NULL, ctime(&seconds));
-            printf(" |   0  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |  10  |  11  |  12  |  13  |  14  |  15  |\n");
+            printf(" |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |  13   |  14   |  15   |\n");
             printf("             |");
             // MCC 118 boards (voltage)
             fprintf(fp_voltages, "%d,", samples_per_channel);
@@ -149,7 +149,7 @@ int main()
             // RPM calculation
             get_rpm(fp_voltages, 1);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2, 1);
+            get_pressure(fp_voltages,1,3, 1);
             printf("             -----------------------------\n");
 
             // RTD data
@@ -182,7 +182,7 @@ int main()
             // RPM calculation
             get_rpm(fp_voltages_slow, 0);
             // Pressure calculation
-            get_pressure(fp_voltages,1,2, 0);
+            get_pressure(fp_voltages,1,3, 0);
 
             // RTD data
             //rtd_read(fp_rtd_slow, 0);

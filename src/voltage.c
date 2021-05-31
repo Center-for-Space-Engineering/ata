@@ -48,8 +48,11 @@ int8_t get_voltages(FILE *fp, uint8_t print) {
 
             //printf("Voltage, Channel %d: T\n", address*8 + channel);
             //printf("Voltage, Channel %d: %4.2f\n", address*8 + channel, value);
-            if (print)
+            if (print) {
+                if (value < 10.0)
+                    printf(" ");
                 printf(" %2.2f |", value);
+            }
         }
     }
     //fprintf(fp, "\n");
@@ -164,9 +167,14 @@ double get_pressure(FILE *fp, uint8_t address, uint8_t channel, uint8_t print) {
         return -1;
     }
 
+    // Convert `result` from voltage to current
+    //printf("\nResult: %12.8f  Channel: %d\n", value, channel);
+    value = value / 240.63;
+    // Convert to mA
+    value = value * 1000;
+    //printf("\nResult: %12.8f  Channel: %d\n", value, channel);
     // Calculate pressure
-    //double pressure = result * 10.0 / 6;
-    double pressure = result * 12.5005 - 49.9417;
+    double pressure = value * 12.5005 - 49.9417;
 
     // Write to file
     fprintf(fp, "%12.2f\n", pressure);
