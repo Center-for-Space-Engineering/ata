@@ -73,7 +73,7 @@ int8_t get_voltages(FILE *fp, uint8_t print) {
  * 
  * returns: error condition (0 is no error)
  */
-int8_t read_sample(uint8_t address, uint8_t channel) {
+int8_t read_sample(FILE *fp, uint8_t address, uint8_t channel) {
     uint32_t options = OPTS_DEFAULT; // Options for voltage boards
 
     double value;
@@ -97,6 +97,12 @@ int8_t read_sample(uint8_t address, uint8_t channel) {
     sample_values[sample_index++] = value;
     if (sample_index >= SAMPLE_COUNT) {
         sample_index = 0;
+    }
+    
+    // Log file
+    if (fp != NULL) {
+        fprintf(fp, "%4.8\n", value);
+        fflush(fp);
     }
     
     return 0;

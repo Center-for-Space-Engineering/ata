@@ -27,8 +27,7 @@
 #include <signal.h>
 
 // Constants
-//#define DELAY_TIME 500
-#define DELAY_TIME 250
+#define DELAY_TIME 500
 #define FNAME_BUFFER_SIZE 50
 
 // Signal to stop logging
@@ -54,10 +53,10 @@ int main()
     // Set up how many loops before sampling for easier modification
     //const int one_hertz = 1000 / delay_between_reads;
     //const int sixty_hertz = 60000 / delay_between_reads;
-    //const int one_hertz = 2000 / delay_between_reads;
-    c//onst int sixty_hertz = 120000 / delay_between_reads;
-    const int one_hertz = 4000 / delay_between_reads;
-    const int sixty_hertz = 240000 / delay_between_reads;
+    const int one_hertz = 2000 / delay_between_reads;
+    const int sixty_hertz = 120000 / delay_between_reads;
+    //const int one_hertz = 4000 / delay_between_reads;
+    //const int sixty_hertz = 240000 / delay_between_reads;
     
     // Set up handler to catch Ctrl+C
     signal(SIGINT, end_handler);
@@ -84,6 +83,11 @@ int main()
     fp_thermo = fopen("logs/thermo.csv", "w");
     fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
 
+    // setup file for RPM logging
+    FILE *fp_rpm;
+    fp_rpm = fopen("logs/rpm.csv", "w");
+    fprintf(fp_rpm, "Value\n");
+    
     // setup files for RTD logging
     //FILE *fp_rtd      = fopen("logs/rtd.csv", "w");
     //FILE *fp_rtd_slow = fopen("logs/rtd_slow.csv", "w");
@@ -194,7 +198,7 @@ int main()
         ////////////////////////
         // Get sample for RPM //
         ////////////////////////
-        result = read_sample(1,2);
+        result = read_sample(fp_rpm, 1,2);
         STOP_ON_ERROR(result);
         
         // Sleep for a second
