@@ -182,7 +182,7 @@ int main()
             // RPM calculation
             get_rpm(fp_voltages_slow, 0);
             // Pressure calculation
-            get_pressure(fp_voltages,1,3, 0);
+            get_pressure(fp_voltages_slow,1,3, 0);
 
             // RTD data
             //rtd_read(fp_rtd_slow, 0);
@@ -191,7 +191,7 @@ int main()
         ////////////////////////
         // Get sample for RPM //
         ////////////////////////
-        result = read_sample(1,1);
+        result = read_sample(1,2);
         STOP_ON_ERROR(result);
         
         // Sleep for a second
