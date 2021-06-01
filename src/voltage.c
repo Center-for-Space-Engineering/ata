@@ -49,7 +49,7 @@ int8_t get_voltages(FILE *fp, uint8_t print) {
             //printf("Voltage, Channel %d: T\n", address*8 + channel);
             //printf("Voltage, Channel %d: %4.2f\n", address*8 + channel, value);
             if (print) {
-                if (value < 10.0)
+                if (value < 10.0 && value >= 0.0)
                     printf(" ");
                 printf(" %2.2f |", value);
             }
@@ -101,7 +101,7 @@ int8_t read_sample(FILE *fp, uint8_t address, uint8_t channel) {
     
     // Log file
     if (fp != NULL) {
-        fprintf(fp, "%4.8\n", value);
+        fprintf(fp, "%1.5f\n", value);
         fflush(fp);
     }
     

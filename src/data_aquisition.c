@@ -71,8 +71,8 @@ int main()
     //char fname_voltages[FNAME_BUFFER_SIZE];
     //printf("\n Enter filename to record voltage data to (include .csv): ");
     //fgets(fname_voltages, FNAME_BUFFER_SIZE, stdin);
-    fp_voltages = fopen("logs/voltages.csv", "w");
-    fp_voltages_slow = fopen("logs/voltages_slow.csv", "w");
+    fp_voltages = fopen("logs/voltages.csv", "a");
+    fp_voltages_slow = fopen("logs/voltages_slow.csv", "a");
 
     // setup file for data to be read to
     FILE *fp_thermo;
@@ -80,12 +80,12 @@ int main()
     //char filename[FNAME_BUFFER_SIZE];
     //printf("\n Enter filename to record temperature data to (include .csv): ");
     //fgets(filename, FNAME_BUFFER_SIZE, stdin);
-    fp_thermo = fopen("logs/thermo.csv", "w");
-    fp_thermo_slow = fopen("logs/thermo_slow.csv", "w");
+    fp_thermo = fopen("logs/thermo.csv", "a");
+    fp_thermo_slow = fopen("logs/thermo_slow.csv", "a");
 
     // setup file for RPM logging
     FILE *fp_rpm;
-    fp_rpm = fopen("logs/rpm.csv", "w");
+    fp_rpm = fopen("logs/rpm.csv", "a");
     fprintf(fp_rpm, "Value\n");
     
     // setup files for RTD logging
@@ -122,12 +122,12 @@ int main()
         // Read values at 1 Hz from all boards //
         /////////////////////////////////////////
         if (samples_per_channel % one_hertz == 0) {
-            //system("clear");
+            system("clear");
             printf("\n");
-            printf("    Time     |                                      Voltage Channel                                                          |\n");
+            printf("    Time     |                                          Voltage Channel                                                          |\n");
             printf(" ");
             print_chars(NULL, ctime(&seconds));
-            printf(" |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |  13   |  14   |  15   |\n");
+            printf(" |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |  13   |  14   |  15   |  16   |\n");
             printf("             |");
             // MCC 118 boards (voltage)
             fprintf(fp_voltages, "%d,", samples_per_channel);
@@ -137,9 +137,9 @@ int main()
             printf("\n");
             STOP_ON_ERROR(result);
             
-            printf("             ---------------------------------------------------------------------------------------------------------\n");
-            printf("             |                                           Thermo Channel                                              |\n");
-            printf("             |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |\n");
+            printf("             -------------------------------------------------------------------------------------------------\n");
+            printf("             |                                       Thermo Channel                                          |\n");
+            printf("             |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |\n");
             printf("             |");
             // MCC 134 boards (thermocouple)
             fprintf(fp_thermo, "%d,", samples_per_channel);
@@ -149,7 +149,7 @@ int main()
             printf("\n");
             STOP_ON_ERROR(result);
 
-            printf("             ---------------------------------------------------------------------------------------------------------\n");
+            printf("             -------------------------------------------------------------------------------------------------\n");
             printf("             |   RPM   |   Pressure      |\n");
             printf("             |");
 
