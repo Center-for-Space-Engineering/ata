@@ -55,7 +55,7 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
     double valueF;
 
     uint8_t result;
-    double deviation;
+    double deviation = 1.0;
 
     // Iterate over the boards
     for (address = 0; address < THERMO_ADDRS; ++address) {
@@ -98,23 +98,23 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
             }
 
             // Determine whether Steady State (SS) or Transient (T)
-
             if (can_deviate[address][channel]) {
                 deviation = calc_deviation(bins[address][channel]);
-                // If deviation is less than the threshold, then SS
-                if (deviation < 0.25) {
-                    fprintf(fp, "Y,");
-                    if (print) {
-                        printf(GRNBG BLKFG "%3.2f" RESET, valueF);
-                        printf(" |");
-                    }
-                } else {
-                    // Otherwise, transient
-                    fprintf(fp, "N,");
-                    if (print) {
-                        printf(REDBG BLKFG "%3.2f" RESET, valueF);
-                        printf(" |");
-                    }
+            }
+
+            // If deviation is less than the threshold, then SS
+            if (deviation < 0.25) {
+                fprintf(fp, "Y,");
+                if (print) {
+                    printf(GRNBG BLKFG " %3.2f" RESET, valueF);
+                    printf(" |");
+                }
+            } else {
+                // Otherwise, transient
+                fprintf(fp, "N,");
+                if (print) {
+                    printf(REDBG BLKFG " %3.2f" RESET, valueF);
+                    printf(" |");
                 }
             }
         }
