@@ -16,7 +16,7 @@
 int8_t get_voltages(FILE *fp, uint8_t print);
 
 // PWM related functions
-#define SAMPLE_COUNT 2000
+#define SAMPLE_COUNT 4000
 
 int8_t read_sample(uint8_t address, uint8_t channel);
 

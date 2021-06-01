@@ -110,9 +110,10 @@ int8_t read_sample(uint8_t address, uint8_t channel) {
  * returns: RPM
  */
 int16_t get_rpm(FILE *fp, uint8_t print) {
-    double threshold = 1.0;
+    double threshold = 0.2;
     uint16_t count = 0;
 
+/*
     uint16_t i = 0;
     // Find start of high pulse
     while (sample_values[i] < threshold) {
@@ -126,6 +127,15 @@ int16_t get_rpm(FILE *fp, uint8_t print) {
 
     // Calculate frequency
     int16_t freq = 1000 / count;
+    */
+    uint16_t freq = 0;
+    // Count rising edges to get frequency
+    for (uint16_t i = 1; i < SAMPLE_COUNT; ++i) {
+        if (sample_values[i-1] < threshold && sample_values[i] > threshold) {
+            freq++;
+        }
+    }
+    
     // RPM = freq * 10
     int16_t rpm = freq * 10;
 

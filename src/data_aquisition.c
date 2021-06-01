@@ -27,7 +27,8 @@
 #include <signal.h>
 
 // Constants
-#define DELAY_TIME 500
+//#define DELAY_TIME 500
+#define DELAY_TIME 250
 #define FNAME_BUFFER_SIZE 50
 
 // Signal to stop logging
@@ -53,8 +54,10 @@ int main()
     // Set up how many loops before sampling for easier modification
     //const int one_hertz = 1000 / delay_between_reads;
     //const int sixty_hertz = 60000 / delay_between_reads;
-    const int one_hertz = 2000 / delay_between_reads;
-    const int sixty_hertz = 120000 / delay_between_reads;
+    //const int one_hertz = 2000 / delay_between_reads;
+    c//onst int sixty_hertz = 120000 / delay_between_reads;
+    const int one_hertz = 4000 / delay_between_reads;
+    const int sixty_hertz = 240000 / delay_between_reads;
     
     // Set up handler to catch Ctrl+C
     signal(SIGINT, end_handler);
