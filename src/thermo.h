@@ -15,7 +15,7 @@
 #define THERMO_HIGH_CHANNEL 3
 #define THERMO_CHANNELS     4
 
-#define MAX_BIN_SIZE 450
+#define MAX_BIN_SIZE 1800
 
 int8_t setup_thermo_daq();
 

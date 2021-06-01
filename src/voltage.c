@@ -101,7 +101,7 @@ int8_t read_sample(FILE *fp, uint8_t address, uint8_t channel) {
     
     // Log file
     if (fp != NULL) {
-        fprintf(fp, "%1.5f\n", value);
+        fprintf(fp, ",%1.5f\n", value);
         fflush(fp);
     }
     
@@ -117,23 +117,7 @@ int8_t read_sample(FILE *fp, uint8_t address, uint8_t channel) {
  */
 int16_t get_rpm(FILE *fp, uint8_t print) {
     double threshold = 0.2;
-    uint16_t count = 0;
-
-/*
-    uint16_t i = 0;
-    // Find start of high pulse
-    while (sample_values[i] < threshold) {
-        i++;
-    }
-
-    // Determine how long signal is high
-    while (sample_values[i++] > threshold) {
-        count++;
-    }
-
-    // Calculate frequency
-    int16_t freq = 1000 / count;
-    */
+    
     uint16_t freq = 0;
     // Count rising edges to get frequency
     for (uint16_t i = 1; i < SAMPLE_COUNT; ++i) {
@@ -184,22 +168,18 @@ double get_pressure(FILE *fp, uint8_t address, uint8_t channel, uint8_t print) {
     }
 
     // Convert `result` from voltage to current
-    //printf("\nResult: %12.8f  Channel: %d\n", value, channel);
     value = value / 240.63;
     // Convert to mA
     value = value * 1000;
-    //printf("\nResult: %12.8f  Channel: %d\n", value, channel);
     // Calculate pressure
     double pressure = value * 12.5005 - 49.9417;
 
     // Write to file
-    //fprintf(fp, "%12.2f\n", pressure);
-    fprintf(fp, "%12.7f\n", value);
+    fprintf(fp, "%10.7f,%5.2f\n", value, pressure);
     fflush(fp);
 
     if (print) {
-        //printf("%12.2f|\n", pressure);
-        printf("%12.7f|\n", value);
+        printf("%10.7f mA |  %5.2f psi |\n", value, pressure);
     }
     
     return pressure;

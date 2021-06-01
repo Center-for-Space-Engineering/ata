@@ -39,7 +39,7 @@ void end_handler(int s) {
 void print_chars(FILE*, char*);
 
 static const char THERMO_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,SS,Channel 1,SS,Channel 2,SS,Channel 3,SS,Channel 4,SS,Channel 5,SS,Channel 6,SS,Channel 7,SS,Channel 8,SS,Channel 9,SS,Channel 10,SS,Channel 11,SS\n";
-static const char VOLTAGE_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15,RPM,Pressure\n";
+static const char VOLTAGE_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),Channel 0,Channel 1,Channel 2,Channel 3,Channel 4,Channel 5,Channel 6,Channel 7,Channel 8,Channel 9,Channel 10,Channel 11,Channel 12,Channel 13,Channel 14,Channel 15,Pressure (mA),Pressure (PSI)\n";
 static const char RTD_HEADER[] = "Sample,Timestamp(dd:hh:mm:ss),RTD 0,RTD 1,RTD 2,RTD 3\n";
 
 int main()
@@ -86,7 +86,7 @@ int main()
     // setup file for RPM logging
     FILE *fp_rpm;
     fp_rpm = fopen("logs/rpm.csv", "a");
-    fprintf(fp_rpm, "Value\n");
+    fprintf(fp_rpm, "Time,Value\n");
     
     // setup files for RTD logging
     //FILE *fp_rtd      = fopen("logs/rtd.csv", "w");
@@ -124,7 +124,7 @@ int main()
         if (samples_per_channel % one_hertz == 0) {
             system("clear");
             printf("\n");
-            printf("    Time     |                                          Voltage Channel                                                          |\n");
+            printf("    Time     |                                                  Voltage Channel (V)                                                      |\n");
             printf(" ");
             print_chars(NULL, ctime(&seconds));
             printf(" |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |  13   |  14   |  15   |  16   |\n");
@@ -138,7 +138,7 @@ int main()
             STOP_ON_ERROR(result);
             
             printf("             -------------------------------------------------------------------------------------------------\n");
-            printf("             |                                       Thermo Channel                                          |\n");
+            printf("             |                                Thermo Channel (degrees F                                      |\n");
             printf("             |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |\n");
             printf("             |");
             // MCC 134 boards (thermocouple)
@@ -150,11 +150,12 @@ int main()
             STOP_ON_ERROR(result);
 
             printf("             -------------------------------------------------------------------------------------------------\n");
-            printf("             |   RPM   |   Pressure      |\n");
+            printf("             |          Pressure         |\n");
             printf("             |");
 
             // RPM calculation
-            get_rpm(fp_voltages, 1);
+            print_chars(fp_rpm, ctime(&seconds));
+            //get_rpm(fp_voltages, 1);
             // Pressure calculation
             get_pressure(fp_voltages,1,3, 1);
             printf("             -----------------------------\n");
@@ -187,7 +188,7 @@ int main()
             STOP_ON_ERROR(result);
 
             // RPM calculation
-            get_rpm(fp_voltages_slow, 0);
+            //get_rpm(fp_voltages_slow, 0);
             // Pressure calculation
             get_pressure(fp_voltages_slow,1,3, 0);
 

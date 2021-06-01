@@ -103,7 +103,7 @@ int8_t get_thermo(FILE *fp, uint8_t print) {
             }
 
             // If deviation is less than the threshold, then SS
-            if (deviation < 0.25) {
+            if (deviation < 0.33) {
                 fprintf(fp, "Y,");
                 if (print) {
                     printf(GRNBG BLKFG " %3.2f" RESET, valueF);

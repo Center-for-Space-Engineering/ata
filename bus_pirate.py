@@ -107,7 +107,7 @@ configure(spi2)
 
 # File to log data to
 logFile = "logs/SPI_logging.csv"
-with open(logFile,'w',buffering=1) as csvfile:
+with open(logFile,'a',buffering=1) as csvfile:
     writer = csv.writer(csvfile)
     #header = ["Sample","Time","SPI0","SPI1","SPI2","SPI3"]
     header = ["Sample","Time","Detector Right Side","Detector bottom","Wire rope isolator frame","Cryo-cooler Cold Tip"]
@@ -127,6 +127,6 @@ with open(logFile,'w',buffering=1) as csvfile:
         count += 1
 
         # Add to file
-        writer.writerow([count, t.strftime("%H:%M:%S"), celcius[0], celcius[1], celcius[2], celcius[3]])
+        writer.writerow([count, t.strftime("%d:%H:%M:%S"), celcius[0], celcius[1], celcius[2], celcius[3]])
 
         time.sleep(1)
