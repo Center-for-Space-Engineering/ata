@@ -105,6 +105,9 @@ configure(spi2)
 #  RTD 3 - Wire rope isolator frame
 #  RTD 4 - Cryo-cooler Cold Tip
 
+rtd_vals = [[],[],[],[]]
+steady_states = [False] * 4
+
 # File to log data to
 logFile = "logs/SPI_logging.csv"
 with open(logFile,'a',buffering=1) as csvfile:
@@ -122,8 +125,19 @@ with open(logFile,'a',buffering=1) as csvfile:
         celcius = convert_to_celcius([data1, data2, data3, data4])
 
         currentTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        #print(f"{currentTime}, running for {count} seconds: {data1}, {data2}, {data3}, {data4}")
-        print(f"{currentTime}, running for {count} seconds: {celcius[0]}, {celcius[1]}, {celcius[2]}, {celcius[3]}")
+
+        # Check for steady state
+        for i in range(len(celcius)):
+            # Append to history
+            rtd_vals[i].append(celcius[i])
+            # Limit to last N samples
+            if len(rtd_vals[i]) > 1800:
+                rtd_vals[i] = rtd_vals[i][-1800:]
+            # Check if steady state
+            avg = sum(rtd_vals[i]) / len(rtd_vals[i])
+            steady_states[i] = ( abs(rtd_vals[i][-1] - avg) < 0.5 )
+
+        print(f"{currentTime}, ran for {count} seconds: {celcius[0]} ({steady_states[0]}), {celcius[1]} ({steady_states[1]}), {celcius[2]} ({steady_states[2]}), {celcius[3]} ({steady_states[3]})")
         count += 1
 
         # Add to file
