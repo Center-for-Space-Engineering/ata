@@ -1,0 +1,54 @@
+9.5940
+9.5886
+
+0.0054
+
+
+5 psi in 80 hours
+
+psi = mA * 12.5005 - 49.9417
+4.39 mA / 80 hours          
+
+8.79498 mA = 60 psi
+9.19497 mA = 65 psi
+9.43496 mA = 68 psi
+9.59495 mA = 70 psi
+
+
+drop of 10 psi to 60 psi is a delta of...
+   9.59495 mA
+ - 8.79498 mA
+ =============
+   0.79997 mA
+
+
+
+0.012 mA in 30 minutes
+1.92 mA over 80 hours
+
+
+
+
+
+
+
+
+
+May 31, 2021
+9.6097 mA at 2:21 PM
+9.5942 mA at 3:00 PM ?
+9.5885 mA at 3:02 PM (30 minute timer started)
+9.5694 mA at 3:25 PM
+                     adjustments made
+9.6005 mA at 3:33 PM
+9.5911 mA at 3:41 PM
+                     Accidental loosening during adjustments at 4:53 PM
+9.6082 mA at 3:55 PM
+                    Addiditonal adjustments
+9.6273 mA at 4:02 PM
+9.6191 mA at 4:08 PM
+
+    Next morning
+9.19 - 9.320 mA at 9:15 AM (on Pi)
+    Stopped logging with Pi at 9:53 AM
+9.2193 mA at 9:54 AM
