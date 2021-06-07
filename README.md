@@ -6,12 +6,15 @@ This code is meant to be run on a Raspberry Pi using 5 HATs (2 MCC 118 and 3 MCC
 ## First time setup
 Steps for setup:
 1. Download this code
-```git clone https://github.com/nichwall/ata
+```
+git clone https://github.com/nichwall/ata
 ```
 2. Setup submodules (in the `ata` directory which was created)
-```cd ata
+```
+cd ata
 git submodule init
-git submodule update```
+git submodule update
+```
 3. Follow the instructions for setup of the [DAQhats library](https://github.com/mccdaq/daqhats/tree/ec33b8673703958140707beb75b0587be93bd660).
 4. Compile program for ATA using `make`
 
